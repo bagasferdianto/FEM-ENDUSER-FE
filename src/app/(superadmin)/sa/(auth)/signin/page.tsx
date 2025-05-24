@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -22,7 +23,7 @@ import Cookies from "js-cookie";
 
 export default function SignInPage() {
   const schema = z.object({
-    email: z.string().nonempty("Email wajib diisi"),
+    email: z.string().nonempty("Email wajib diisi").email("Email tidak valid"),
     password: z.string().nonempty("Password wajib diisi"),
   });
 
@@ -125,8 +126,16 @@ export default function SignInPage() {
                 className="text-white w-full bg-blue-800 hover:bg-blue-900"
                 size={"lg"}
                 type="submit"
+                disabled={signInMutation.isPending}
               >
-                Masuk
+                {signInMutation.isPending ? (
+                  <span className="flex items-center justify-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Memuat...
+                  </span>
+                ) : (
+                  "Masuk"
+                )}
               </Button>
             </form>
           </Form>
