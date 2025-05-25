@@ -1,3 +1,5 @@
+'use client';
+
 import SuperadminLayout from "@/components/layout-superadmin";
 
 export default function ManageVotingPage () {
