@@ -3,6 +3,8 @@
 import React from "react";
 import { HttpProvider, QueryClient } from "react-ohttp";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
+import { ProgressProvider } from "@bprogress/next/app";
 
 const queryClient = new QueryClient();
 
@@ -24,13 +26,27 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
       onReject={(e) => {
         if (e.status === 401) {
+          toast.error("Sesi anda telah habis silahkan login kembali.");
           Cookies.remove("auth_token");
-          location.href = "/login";
+
+          const currentPath = window.location.pathname;
+          if (currentPath.startsWith("/sa")) {
+            location.href = "/sa/signin";
+          } else {
+            location.href = "/login";
+          }
         }
         return e;
       }}
     >
-      <>{children}</>
+      <ProgressProvider
+        height="4px"
+        color="#00009C"
+        options={{ showSpinner: false }}
+        shallowRouting
+      >
+        {children}
+      </ProgressProvider>
     </HttpProvider>
   );
 }
