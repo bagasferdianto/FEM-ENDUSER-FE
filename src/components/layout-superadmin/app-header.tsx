@@ -28,10 +28,10 @@ export function AppHeader() {
       "/sa/manage-season": "Kelola Season",
       "/sa/manage-series": "Kelola Series",
       "/sa/manage-voting": "Kelola Voting",
-      "/sa/data-tim": "Data Tim",
-      "/sa/data-player": "Data Player",
-      "/sa/data-tim-bermain": "Data Tim Yang Bermain",
-      "/sa/data-venue": "Data Venue",
+      "/sa/team-data": "Data Tim",
+      "/sa/player-data": "Data Player",
+      "/sa/playing-team-data": "Data Tim Yang Bermain",
+      "/sa/venue-data": "Data Venue",
       "/sa/transaction": "Transaksi",
     };
     return pathMap[path] || "";

@@ -48,22 +48,22 @@ const menuItems = [
   },
   {
     title: "Data Tim",
-    url: "/sa/data-tim",
+    url: "/sa/team-data",
     icon: Users,
   },
   {
     title: "Data Player",
-    url: "/sa/data-player",
+    url: "/sa/player-data",
     icon: User,
   },
   {
     title: "Data Tim Yang Bermain",
-    url: "/sa/data-tim-bermain",
+    url: "/sa/playing-team-data",
     icon: BarChart3,
   },
   {
     title: "Data Venue",
-    url: "/sa/data-venue",
+    url: "/sa/venue-data",
     icon: MapPin,
   },
   {
