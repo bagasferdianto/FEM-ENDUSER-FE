@@ -12,9 +12,11 @@ export default function SuperadminLayout({
     <SidebarProvider defaultOpen={true}>
       <AppSidebar />
       <SidebarInset>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col h-screen">
           <AppHeader />
-          <main className="flex-1 p-6 bg-gray-50">{children}</main>
+          <main className="flex-1 p-6 bg-gray-50 overflow-auto">
+            {children}
+          </main>
         </div>
       </SidebarInset>
     </SidebarProvider>

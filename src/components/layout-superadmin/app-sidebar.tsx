@@ -1,5 +1,6 @@
 "use client";
 
+import {minimatch} from "minimatch"
 import {
   BarChart3,
   Calendar,
@@ -29,46 +30,55 @@ const menuItems = [
   {
     title: "Dashboard",
     url: "/sa/dashboard",
+    pattern: "/sa/dashboard{,/**}",
     icon: Home,
   },
   {
     title: "Kelola Season",
     url: "/sa/manage-season",
+    pattern: "/sa/manage-season{,/**}",
     icon: Calendar,
   },
   {
     title: "Kelola Series",
     url: "/sa/manage-series",
+    pattern: "/sa/manage-series{,/**}",
     icon: Trophy,
   },
   {
     title: "Kelola Voting",
     url: "/sa/manage-voting",
+    pattern: "/sa/manage-voting{,/**}",
     icon: Vote,
   },
   {
     title: "Data Tim",
-    url: "/sa/data-tim",
+    url: "/sa/team-data",
+    pattern: "/sa/team-data{,/**}",
     icon: Users,
   },
   {
     title: "Data Player",
-    url: "/sa/data-player",
+    url: "/sa/player-data",
+    pattern: "/sa/player-data{,/**}",
     icon: User,
   },
   {
     title: "Data Tim Yang Bermain",
-    url: "/sa/data-tim-bermain",
+    url: "/sa/playing-team-data",
+    pattern: "/sa/playing-team-data{,/**}",
     icon: BarChart3,
   },
   {
     title: "Data Venue",
-    url: "/sa/data-venue",
+    url: "/sa/venue-data",
+    pattern: "/sa/venue-data{,/**}",
     icon: MapPin,
   },
   {
     title: "Transaksi",
     url: "/sa/transaction",
+    pattern: "/sa/transaction{,/**}",
     icon: CreditCard,
   },
 ];
@@ -97,7 +107,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.url}
+                    isActive={minimatch(pathname, item.pattern || item.url)}
                     tooltip={item.title}
                     className="data-[active=true]:bg-blue-pfl data-[active=true]:text-white hover:bg-slate-200 gap-3"
                     size={"custom"}

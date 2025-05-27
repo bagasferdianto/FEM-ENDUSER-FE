@@ -14,6 +14,8 @@ export default {
           "blue-pfl": cssVar("pfl-blue"),
           primary: cssVar("primary"),
           destructive: cssVar("destructive"),
+          border: cssVar("border"),
+          input: cssVar("input"),
           muted: cssVar("muted"),
           "muted-foreground": cssVar("muted-foreground"),
           background: cssVar("background"),

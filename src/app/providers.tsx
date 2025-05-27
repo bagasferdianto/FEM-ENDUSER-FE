@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { startTransition, useState } from "react";
 import { HttpProvider, QueryClient } from "react-ohttp";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { ProgressProvider } from "@bprogress/next/app";
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const [show401, setShow401] = useState(false);
   return (
     <HttpProvider
       client={queryClient}
@@ -21,11 +22,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
         return c;
       }}
       onFulfill={(res) => {
-        console.log(res, "success");
         return res;
       }}
       onReject={(e) => {
-        if (e.status === 401) {
+        if (e.status === 401 && !show401) {
+          startTransition(() => {
+            setShow401(true);
+          });
           toast.error("Sesi anda telah habis silahkan login kembali.");
           Cookies.remove("auth_token");
 
@@ -36,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             location.href = "/login";
           }
         }
-        return e;
+        throw e;
       }}
     >
       <ProgressProvider
