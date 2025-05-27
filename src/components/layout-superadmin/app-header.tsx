@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useGetProfile } from "@/app/(superadmin)/sa/(authenticated)/_services/profile";
 import { signOut } from "@/app/(superadmin)/sa/(auth)/signout/_actions/signout";
+import { minimatch } from "minimatch";
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -22,19 +23,20 @@ export function AppHeader() {
   const { data } = useGetProfile();
 
   // Get page title based on current path
-  const getPageTitle = (path: string) => {
-    const pathMap: { [key: string]: string } = {
-      "/sa/dashboard": "Dashboard",
-      "/sa/manage-season": "Kelola Season",
-      "/sa/manage-series": "Kelola Series",
-      "/sa/manage-voting": "Kelola Voting",
-      "/sa/team-data": "Data Tim",
-      "/sa/player-data": "Data Player",
-      "/sa/playing-team-data": "Data Tim Yang Bermain",
-      "/sa/venue-data": "Data Venue",
-      "/sa/transaction": "Transaksi",
-    };
-    return pathMap[path] || "";
+  const pathMap: { pattern: string; title: string }[] = [
+    { pattern: "/sa/dashboard{,/**}", title: "Dashboard" },
+    { pattern: "/sa/manage-season{,/**}", title: "Kelola Season" },
+    { pattern: "/sa/manage-series{,/**}", title: "Kelola Series" },
+    { pattern: "/sa/manage-voting{,/**}", title: "Kelola Voting" },
+    { pattern: "/sa/team-data{,/**}", title: "Data Tim" },
+    { pattern: "/sa/player-data{,/**}", title: "Data Player" },
+    { pattern: "/sa/playing-team-data{,/**}", title: "Data Tim Yang Bermain" },
+    { pattern: "/sa/venue-data{,/**}", title: "Data Venue" },
+    { pattern: "/sa/transaction{,/**}", title: "Transaksi" },
+  ];
+  const getPageTitle = (path: string): string => {
+    const match = pathMap.find(({ pattern }) => minimatch(path, pattern));
+    return match?.title || "";
   };
 
   return (

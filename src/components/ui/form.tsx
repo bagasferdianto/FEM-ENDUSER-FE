@@ -104,6 +104,25 @@ function FormLabel({
   )
 }
 
+type RequiredLabelProps = {
+  children: React.ReactNode;
+  required?: boolean;
+  className?: string;
+};
+
+function RequiredLabel({ children, required, className }: RequiredLabelProps) {
+  return (
+    <FormLabel
+      className={cn(
+        className,
+        required && "after:content-['*'] after:ml-1 after:text-red-500"
+      )}
+    >
+      {children}
+    </FormLabel>
+  );
+}
+
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
@@ -160,6 +179,7 @@ export {
   Form,
   FormItem,
   FormLabel,
+  RequiredLabel,
   FormControl,
   FormDescription,
   FormMessage,

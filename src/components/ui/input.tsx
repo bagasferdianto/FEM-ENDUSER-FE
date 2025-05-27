@@ -1,6 +1,8 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
+import { RequiredLabel } from "./form";
+import { Files, FolderSearch2 } from "lucide-react";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -14,9 +16,115 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         ref={ref}
         {...props}
       />
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
-export { Input }
+interface FileUploadProps {
+  onFileSelect: (file: File | null) => void;
+  selectedFile: File | string | null;
+  label: string;
+  accept: string;
+  required?: boolean;
+}
+
+function FileUpload({
+  onFileSelect,
+  selectedFile,
+  label,
+  accept,
+  required,
+}: FileUploadProps) {
+  const [dragActive, setDragActive] = React.useState(false);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      onFileSelect(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      onFileSelect(e.target.files[0]);
+    }
+  };
+
+  const getDisplayName = () => {
+    if (selectedFile instanceof File) {
+      return selectedFile.name;
+    }
+    if (typeof selectedFile === "string" && selectedFile) {
+      return selectedFile;
+    }
+    return null;
+  };
+
+  const displayName = getDisplayName();
+
+  return (
+    <div className="space-y-2">
+      <RequiredLabel required={required}>{label}</RequiredLabel>
+      <div
+        className={cn(
+          "relative border border-input bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 shadow-sm rounded-md p-2 transition-colors",
+          dragActive ? "border-blue-500 bg-blue-50" : "",
+          "hover:border-gray-400"
+        )}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          accept={accept}
+          onChange={handleFileChange}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+
+        {displayName ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Files className="h-4 w-4" />
+              <span className="text-sm text-blue-500 underline">
+                {displayName}
+              </span>
+            </div>
+            <FolderSearch2 className="h-5 w-5" />
+          </div>
+        ) : (
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-row">
+              <Files
+                className="h-4 w-4 text-black"
+                strokeOpacity={1}
+                strokeWidth={2}
+              />
+              <p className="text-sm text-muted-foreground">
+                Masukkan file disini
+              </p>
+            </div>
+            <FolderSearch2 className="h-5 w-5" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export { Input, FileUpload };
