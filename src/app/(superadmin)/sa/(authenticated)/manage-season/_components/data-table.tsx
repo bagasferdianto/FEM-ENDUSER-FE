@@ -39,6 +39,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 interface SeasonsDataTableProps {
   seasons: Season[];
@@ -207,11 +208,11 @@ export function SeasonsDataTable({ seasons }: SeasonsDataTableProps) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       className="font-medium"
-                      onClick={() =>
-                        router.push(`/sa/manage-season/${season.id}/edit`)
-                      }
+                      asChild
                     >
+                      <Link href={`/sa/manage-season/${season.id}/edit`}>
                       Edit Season
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="font-medium"
