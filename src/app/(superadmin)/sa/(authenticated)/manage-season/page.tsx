@@ -33,8 +33,8 @@ export default function ManageSeasonPage() {
           </h1>
           <Link href={"/sa/manage-season/create"}>
             <Button className="gap-2 text-white bg-blue-pfl">
-              <Plus className="h-4 w-4" />
               Tambah Season Baru
+              <Plus className="h-4 w-4" />
             </Button>
           </Link>
         </div>

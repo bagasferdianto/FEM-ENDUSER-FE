@@ -186,14 +186,14 @@ export function VenuesDataTable({ venues }: VenuesDataTableProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="cursor-pointer font-medium"
                       onClick={() => setUpdateForm(venue)}
                     >
                       Edit Venue
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="cursor-pointer font-medium"
                       onClick={() => handleDeleteClick(venue)}
                     >
                       Delete Venue

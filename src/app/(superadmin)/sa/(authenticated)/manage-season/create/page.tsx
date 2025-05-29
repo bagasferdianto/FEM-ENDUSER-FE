@@ -17,7 +17,7 @@ import {
   FormMessage,
   RequiredLabel,
 } from "@/components/ui/form";
-import { SquareArrowLeft } from "lucide-react";
+import { Loader2, Plus, SquareArrowLeft } from "lucide-react";
 import SuperadminLayout from "@/components/layout-superadmin";
 import Link from "next/link";
 import { useCreateSeason } from "../../_services/season";
@@ -164,7 +164,11 @@ export default function CreateSeasonForm() {
                 className="bg-blue-pfl hover:bg-blue-700 text-white"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Menambahkan..." : "Tambahkan Season"}
+                {isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Tambahkan Season
+                <Plus className="w-4 h-4" />
               </Button>
             </form>
           </Form>

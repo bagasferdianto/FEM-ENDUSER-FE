@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import {
   type Season,
   StatusEnum,
@@ -123,18 +123,18 @@ export function SeasonsDataTable({ seasons }: SeasonsDataTableProps) {
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/4">Nama Season</TableHead>
-            <TableHead className="w-1/3">Logo Season</TableHead>
-            <TableHead className="w-1/3">Banner Season</TableHead>
-            <TableHead className="w-1/12">Status</TableHead>
-            <TableHead className="w-1/12 text-right">Action</TableHead>
+            <TableHead className="w-1/4 text-muted-foreground">Nama Season</TableHead>
+            <TableHead className="w-1/3 text-muted-foreground">Logo Season</TableHead>
+            <TableHead className="w-1/3 text-muted-foreground">Banner Season</TableHead>
+            <TableHead className="w-1/12 text-muted-foreground">Status</TableHead>
+            <TableHead className="w-1/12 text-muted-foreground text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {seasons.map((season) => (
             <TableRow key={season.id}>
-              <TableCell className="truncate max-w-xs">{season.name}</TableCell>
-              <TableCell className="truncate max-w-xs">
+              <TableCell className="truncate max-w-xs font-medium">{season.name}</TableCell>
+              <TableCell className="truncate max-w-xs font-medium">
                 <a
                   href={season.logo.url}
                   className="text-blue-600 hover:underline whitespace-nowrap"
@@ -144,7 +144,7 @@ export function SeasonsDataTable({ seasons }: SeasonsDataTableProps) {
                   {season.logo.name}
                 </a>
               </TableCell>
-              <TableCell className="truncate max-w-xs">
+              <TableCell className="truncate max-w-xs font-medium">
                 <a
                   href={season.banner.url}
                   className="text-blue-600 hover:underline whitespace-nowrap"
@@ -197,25 +197,26 @@ export function SeasonsDataTable({ seasons }: SeasonsDataTableProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right font-medium">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
                       <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
+                      <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="font-medium cursor-pointer"
                       asChild
                     >
                       <Link href={`/sa/manage-season/${season.id}/edit`}>
                       Edit Season
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="font-medium cursor-pointer"
                       onClick={() => handleDeleteClick(season)}
                     >
                       Delete Season
