@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis, Loader2 } from "lucide-react";
@@ -182,15 +183,16 @@ export default function TeamCard({
         <DropdownMenuContent className="w-56">
           <DropdownMenuGroup>
             <DropdownMenuItem
-              className="cursor-pointer"
+              className="cursor-pointer font-medium"
               onClick={() => {
                 setUpdateForm(team);
               }}
             >
-              Edit Tim
+              Edit Data Tim
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="cursor-pointer"
+              className="cursor-pointer font-medium"
               onClick={() => handleDeleteClick(team)}
             >
               Hapus Tim

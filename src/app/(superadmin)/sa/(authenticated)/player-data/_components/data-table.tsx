@@ -5,6 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -15,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader2, MoreHorizontal } from "lucide-react";
+import { Loader2, MoreVertical } from "lucide-react";
 import { type Player } from "../../_models/response/player";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -161,37 +162,38 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/5">No</TableHead>
-            <TableHead className="w-1/2">Nama Lengkap Player</TableHead>
-            <TableHead className="w-1/2">Tanggal Ditambahkan</TableHead>
-            <TableHead className="w-1/12 text-right"></TableHead>
+            <TableHead className="w-1/5 text-muted-foreground">No</TableHead>
+            <TableHead className="w-1/2 text-muted-foreground">Nama Lengkap</TableHead>
+            <TableHead className="w-1/2 text-muted-foreground">Tanggal Ditambahkan</TableHead>
+            <TableHead className="w-1/12 text-muted-foreground text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {players.map((player, index) => (
             <TableRow key={player.id}>
-              <TableCell className="truncate max-w-xs">{index + 1}</TableCell>
-              <TableCell className="truncate max-w-xs">{player.name}</TableCell>
-              <TableCell className="truncate max-w-xs">
+              <TableCell className="truncate max-w-xs font-medium">{index + 1}</TableCell>
+              <TableCell className="truncate max-w-xs font-medium">{player.name}</TableCell>
+              <TableCell className="truncate max-w-xs font-medium">
                 {formatDate(player.createdAt)}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right font-medium">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
                       <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
+                      <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="cursor-pointer font-medium"
                       onClick={() => setUpdateForm(player)}
                     >
-                      Edit Player
+                      Edit Data Player
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="cursor-pointer font-medium"
                       onClick={() => handleDeleteClick(player)}
                     >
                       Delete Player

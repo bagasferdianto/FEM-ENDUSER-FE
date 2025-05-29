@@ -129,8 +129,8 @@ export default function TeamDataPage() {
               setOpenModal(true);
             }}
           >
-            <Plus className="h-4 w-4" />
             Tambah Data Team
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
 
@@ -143,7 +143,7 @@ export default function TeamDataPage() {
                 Belum Ada Data Team
               </h3>
               <p className="text-muted-foreground text-center">
-                Tambahkan Team Baru Untuk Membuat Data Team
+                Silahkan Tambahkan Data Team Baru
               </p>
             </CardContent>
           </Card>

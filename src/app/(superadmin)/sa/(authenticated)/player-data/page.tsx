@@ -112,14 +112,14 @@ export default function ManagePlayerPage() {
       <div className="space-y-6 max-w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">
-            Daftar Player Pro Futsal League
+            Daftar Player
           </h1>
           <Button
             className="gap-2 text-white bg-blue-pfl"
             onClick={() => setOpenModal(true)}
           >
-            <Plus className="h-4 w-4" />
             Tambah Data Player
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
 
@@ -131,7 +131,7 @@ export default function ManagePlayerPage() {
                 Belum Ada Data Player
               </h3>
               <p className="text-muted-foreground text-center">
-                Tambahkan Player Baru Untuk Membuat Data Player
+                Silahkan Tambahkan Data Player Baru
               </p>
             </CardContent>
           </Card>
