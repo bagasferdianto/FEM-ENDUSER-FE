@@ -77,3 +77,11 @@
     --sidebar-ring: oklch(0.439 0 0);
   }
 }
+
+.bg-club {
+  background-image: url("../../public//bg/bg-club.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  background-position: center;
+}
