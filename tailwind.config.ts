@@ -13,6 +13,7 @@ export default {
         colors: {
           "blue-pfl": cssVar("pfl-blue"),
           primary: cssVar("primary"),
+          foreground: cssVar("foreground"),
           destructive: cssVar("destructive"),
           border: cssVar("border"),
           input: cssVar("input"),
