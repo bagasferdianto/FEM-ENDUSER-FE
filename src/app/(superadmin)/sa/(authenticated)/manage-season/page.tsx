@@ -15,6 +15,8 @@ export default function ManageSeasonPage() {
 
   const seasons = useGetSeasons({
     page: page.toString(),
+    sort: "status",
+    dir: "asc",
   });
 
   const seasonsList = seasons.data?.data?.list || [];

@@ -64,6 +64,23 @@ export default function CreateSeasonForm() {
           toast.error(
             error?.data?.message || "Terjadi kesalahan saat menambahkan season"
           );
+
+          // Handle validation errors
+          if (error.status === 422) {
+            const validationErrors = error.data.validation as Partial<
+              Record<keyof FormData, string>
+            >;
+
+            Object.entries(validationErrors).forEach(([field, message]) => {
+              if (message) {
+                form.setError(field as keyof FormData, {
+                  type: "manual",
+                  message,
+                });
+              }
+            });
+          }
+          
           setIsSubmitting(false);
         },
         onSuccess: () => {
