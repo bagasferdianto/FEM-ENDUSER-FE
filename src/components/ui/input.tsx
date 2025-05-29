@@ -3,6 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { RequiredLabel } from "./form";
 import { Files, FolderSearch2 } from "lucide-react";
+import { toast } from "sonner";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -27,6 +28,7 @@ interface FileUploadProps {
   label: string;
   accept: string;
   required?: boolean;
+  maxSizeInMB?: number;
 }
 
 function FileUpload({
@@ -35,8 +37,17 @@ function FileUpload({
   label,
   accept,
   required,
+  maxSizeInMB = 5,
 }: FileUploadProps) {
   const [dragActive, setDragActive] = React.useState(false);
+
+  const validateFileSize = (file: File): boolean => {
+    const isValid = file.size <= maxSizeInMB * 1024 * 1024;
+    if (!isValid) {
+      toast.error(`Ukuran file tidak boleh melebihi ${maxSizeInMB} MB.`);
+    }
+    return isValid;
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -53,14 +64,16 @@ function FileUpload({
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onFileSelect(e.dataTransfer.files[0]);
+    const file = e.dataTransfer.files?.[0];
+    if (file && validateFileSize(file)) {
+      onFileSelect(file);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      onFileSelect(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file && validateFileSize(file)) {
+      onFileSelect(file);
     }
   };
 
