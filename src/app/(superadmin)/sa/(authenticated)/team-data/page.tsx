@@ -183,7 +183,7 @@ export default function TeamDataPage() {
                   <FormItem className="w-full">
                     <FormLabel>Masukkan Nama Tim</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="Nama Tim" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
