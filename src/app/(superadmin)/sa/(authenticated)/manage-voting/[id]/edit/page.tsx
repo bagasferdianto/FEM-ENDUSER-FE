@@ -35,6 +35,7 @@ import { useGetVotingById, useUpdateVoting } from "../../../_services/voting";
 import { StatusRequestEnum } from "../../../_models/response/voting";
 import { useGetSeries } from "../../../_services/series";
 import { formatDateToLocalISOString } from "@/lib/utils";
+import { mapStatusStringToEnumValue } from "../../../_utils/voting";
 
 const formSchema = z.object({
   title: z.string().nonempty("Judul voting wajib diisi"),
@@ -90,7 +91,7 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
               startDate: new Date(voting.data.startDate),
               endDate: new Date(voting.data.endDate),
               banner: voting.data.banner.name,
-              status: voting.data.status.toString(),
+              status: mapStatusStringToEnumValue(voting.data.status),
           });
           setIsLoading(false);
           };

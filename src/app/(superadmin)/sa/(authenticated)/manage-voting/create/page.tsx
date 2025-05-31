@@ -66,7 +66,11 @@ export default function CreateVotingForm() {
 
   const createVoting = useCreateVoting();
   const router = useRouter();
-  const { data } = useGetSeries();
+  const { data } = useGetSeries({
+    sort: "createdAt",
+    dir: "desc",
+    limit: "1000",
+  });
   const seriesList = data?.data?.list ?? [];
 
   const onSubmit = async (data: FormData) => {
@@ -276,6 +280,7 @@ export default function CreateVotingForm() {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Tambah Voting
+                <Plus className="h-4 w-4" />
               </Button>
             </form>
           </Form>
