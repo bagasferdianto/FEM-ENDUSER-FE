@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useState } from "react";
+import { startTransition, useRef, useState } from "react";
 import { HttpProvider, QueryClient } from "react-ohttp";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [show401, setShow401] = useState(false);
+  const hasShown401Toast = useRef(false);
   return (
     <HttpProvider
       client={queryClient}
@@ -25,7 +26,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         return res;
       }}
       onReject={(e) => {
-        if (e.status === 401 && !show401) {
+        if (e.status === 401 && !hasShown401Toast.current && !show401) {
+          hasShown401Toast.current = true;
           startTransition(() => {
             setShow401(true);
           });

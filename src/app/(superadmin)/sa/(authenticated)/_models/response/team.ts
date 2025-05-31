@@ -23,6 +23,7 @@ export interface Team {
     id: string;
     name: string;
     logo: Logo;
+    isSelected: boolean | undefined;
     createdAt: string;
     updatedAt: string;
 }

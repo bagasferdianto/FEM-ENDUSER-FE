@@ -9,6 +9,10 @@ export const useGetSeasons = (params: Record<string, string>) => {
   });
 };
 
+export const useGetActiveSeason = () => {
+  return useHttp<SeasonResponse>("/superadmin/seasons/active");
+}
+
 export const useUpdateStatusSeason = () => {
   return useHttpMutation<SeasonResponse>(
     `/superadmin/seasons/{id}/status`,

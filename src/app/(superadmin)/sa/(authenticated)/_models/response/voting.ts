@@ -51,7 +51,7 @@ export interface Banner {
 export enum StatusEnum {
     ComingSoon = "Coming Soon",
     Active = "Active",
-    NonActive = "NonActive",
+    NonActive = "Non-Active",
 }
 
 export enum StatusRequestEnum {
