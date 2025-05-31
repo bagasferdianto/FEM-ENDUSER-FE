@@ -45,13 +45,14 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
 
   return (
     <div className="flex items-center justify-center space-x-2 py-2">
-      <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1}>
+      <Button variant="outline" type="button" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1}>
         <ChevronLeft className="h-4 w-4" />
         Previous
       </Button>
 
       {getVisiblePages().map((page, index) => (
         <Button
+          type="button"
           key={index}
           variant={page === currentPage ? "default" : "outline"}
           size="sm"
@@ -64,6 +65,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
       ))}
 
       <Button
+        type="button"
         variant="outline"
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
