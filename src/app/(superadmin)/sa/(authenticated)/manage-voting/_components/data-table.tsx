@@ -235,6 +235,15 @@ export function VotingsDataTable({ votings }: VotingsDataTableProps) {
                       className="font-medium cursor-pointer"
                       asChild
                     >
+                      <Link href={`/sa/manage-voting/${voting.id}/candidate`}>
+                        Detail Voting
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                      className="font-medium cursor-pointer"
+                      asChild
+                    >
                       <Link href={`/sa/manage-voting/${voting.id}/edit`}>
                         Edit Voting
                       </Link>
