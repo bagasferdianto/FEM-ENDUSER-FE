@@ -55,7 +55,7 @@ export default function ManageVotingPage() {
           <div className="space-y-4">
             <VotingsDataTable votings={votingsList} />
 
-            <div className="flex items-start justify-between">
+            <div className="flex items-end justify-end">
               <PaginationControls
                 currentPage={page}
                 totalPages={totalPages}

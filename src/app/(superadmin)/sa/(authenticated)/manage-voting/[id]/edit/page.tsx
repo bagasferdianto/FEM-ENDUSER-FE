@@ -83,20 +83,20 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
   const seriesList = data?.data?.list ?? [];
 
   useEffect(() => {
-      const fetchVoting = async () => {
-          if (!voting?.data) return;
-          form.reset({
-              title: voting.data.title,
-              seriesId: voting.data.seriesId,
-              startDate: new Date(voting.data.startDate),
-              endDate: new Date(voting.data.endDate),
-              banner: voting.data.banner.name,
-              status: mapStatusStringToEnumValue(voting.data.status),
-          });
-          setIsLoading(false);
-          };
-          fetchVoting();
-      }, [voting, form]);
+    const fetchVoting = async () => {
+      if (!voting?.data) return;
+      form.reset({
+        title: voting.data.title,
+        seriesId: voting.data.seriesId,
+        startDate: new Date(voting.data.startDate),
+        endDate: new Date(voting.data.endDate),
+        banner: voting.data.banner.name,
+        status: mapStatusStringToEnumValue(voting.data.status),
+      });
+      setIsLoading(false);
+    };
+    fetchVoting();
+  }, [voting, form]);
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -152,7 +152,7 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
 
   if (isLoading) {
     return (
-     <SuperadminLayout>
+      <SuperadminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-pfl mx-auto"></div>
@@ -190,33 +190,37 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
                   </FormItem>
                 )}
               />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="seriesId"
+                  render={({ field }) => (
+                    <FormItem className="w-full md:col-span-2">
+                      <RequiredLabel>Pilih Series</RequiredLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih Series" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {seriesList.map((series) => (
+                            <SelectItem key={series.id} value={series.id}>
+                              {series.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="seriesId"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <RequiredLabel>Pilih Series</RequiredLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih Series" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {seriesList.map((series) => (
-                          <SelectItem key={series.id} value={series.id}>
-                            {series.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-end gap-8">
                 <FormField
                   control={form.control}
                   name="startDate"
@@ -233,7 +237,7 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
                     </FormItem>
                   )}
                 />
-
+                <div className="pb-3">–</div>
                 <FormField
                   control={form.control}
                   name="endDate"

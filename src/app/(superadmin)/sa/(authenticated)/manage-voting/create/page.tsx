@@ -150,32 +150,37 @@ export default function CreateVotingForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="seriesId"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <RequiredLabel>Pilih Series</RequiredLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih Series" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {seriesList.map((series) => (
-                          <SelectItem key={series.id} value={series.id}>
-                            {series.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="seriesId"
+                  render={({ field }) => (
+                    <FormItem className="w-full md:col-span-2">
+                      <RequiredLabel>Pilih Series</RequiredLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih Series" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {seriesList.map((series) => (
+                            <SelectItem key={series.id} value={series.id}>
+                              {series.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-end gap-8">
                 <FormField
                   control={form.control}
                   name="startDate"
@@ -192,7 +197,7 @@ export default function CreateVotingForm() {
                     </FormItem>
                   )}
                 />
-
+                <div className="pb-3">–</div>
                 <FormField
                   control={form.control}
                   name="endDate"
