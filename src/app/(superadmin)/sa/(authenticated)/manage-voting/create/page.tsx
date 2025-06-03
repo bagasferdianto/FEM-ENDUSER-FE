@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -35,6 +35,8 @@ import { toast } from "sonner";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useGetSeries } from "../../_services/series";
 import { formatDateToLocalISOString } from "@/lib/utils";
+import { useGetActiveSeason } from "../../_services/season";
+import { Season } from "../../_models/response/season";
 
 const formSchema = z.object({
   title: z.string().nonempty("Judul voting wajib diisi"),
@@ -65,11 +67,31 @@ export default function CreateVotingForm() {
   });
 
   const createVoting = useCreateVoting();
+  const { data: season, isFetching } = useGetActiveSeason();
   const router = useRouter();
+  const [activeSeason, setActiveSeason] = useState<Season | null>(null);
+
+  useEffect(() => {
+    if (!isFetching) {
+      if (season?.status === 400) {
+        setActiveSeason(null);
+        toast.error("Tidak terdapat season active");
+        router.push("/sa/manage-season");
+      } else {
+        setActiveSeason(season?.data || null);
+        if (!season?.data) {
+          toast.error("Tidak terdapat season active");
+          router.push("/sa/manage-season");
+        }
+      }
+    }
+  }, [season, router, isFetching]);
+
   const { data } = useGetSeries({
     sort: "createdAt",
     dir: "desc",
     limit: "1000",
+    seasonId: activeSeason?.id || "none",
   });
   const seriesList = data?.data?.list ?? [];
 
@@ -121,6 +143,19 @@ export default function CreateVotingForm() {
       }
     );
   };
+
+  if (isFetching) {
+    return (
+      <SuperadminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-pfl mx-auto"></div>
+            <p className="mt-2 text-gray-600">Memuat data season...</p>
+          </div>
+        </div>
+      </SuperadminLayout>
+    );
+  }
 
   return (
     <SuperadminLayout>
