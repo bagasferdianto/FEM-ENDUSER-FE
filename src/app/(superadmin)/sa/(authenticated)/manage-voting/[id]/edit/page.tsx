@@ -36,10 +36,12 @@ import { StatusRequestEnum } from "../../../_models/response/voting";
 import { useGetSeries } from "../../../_services/series";
 import { formatDateToLocalISOString } from "@/lib/utils";
 import { mapStatusStringToEnumValue } from "../../../_utils/voting";
+import { useGetActiveSeason } from "../../../_services/season";
+import { Season } from "../../../_models/response/season";
 
 const formSchema = z.object({
   title: z.string().nonempty("Judul voting wajib diisi"),
-  seriesId: z.string().nonempty("Seri wajib dipilih"),
+  seriesId: z.string().nonempty("Series wajib dipilih"),
   startDate: z.date({ required_error: "Tanggal mulai wajib diisi" }),
   endDate: z.date({ required_error: "Tanggal selesai wajib diisi" }),
   banner: z.union([z.instanceof(File), z.string()]).optional(),
@@ -79,7 +81,31 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
   });
 
   const updateVoting = useUpdateVoting();
-  const { data } = useGetSeries();
+  const { data: season, isFetching: isFetchingSeason } = useGetActiveSeason();
+  const [activeSeason, setActiveSeason] = useState<Season | null>(null);
+
+  useEffect(() => {
+    if (!isFetching) {
+      if (season?.status === 400) {
+        setActiveSeason(null);
+        toast.error("Tidak terdapat season active");
+        router.push("/sa/manage-season");
+      } else {
+        setActiveSeason(season?.data || null);
+        if (!season?.data) {
+          toast.error("Tidak terdapat season active");
+          router.push("/sa/manage-season");
+        }
+      }
+    }
+  }, [season, router, isFetching]);
+
+  const { data } = useGetSeries({
+    sort: "createdAt",
+    dir: "desc",
+    limit: "1000",
+    seasonId: activeSeason?.id || "none",
+  });
   const seriesList = data?.data?.list ?? [];
 
   useEffect(() => {
@@ -119,7 +145,7 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
       {
         onError: (error) => {
           toast.error(
-            error?.data?.message || "Terjadi kesalahan saat menambahkan voting"
+            error?.data?.message || "Terjadi kesalahan saat memperbarui voting"
           );
 
           // Handle validation errors
