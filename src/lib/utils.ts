@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { string } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -50,4 +49,12 @@ export function formatDateToLocalISOString(date: Date): string {
   const seconds = pad(date.getSeconds());
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+}
+
+export function formatRupiah(value: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0
+  }).format(value);
 }

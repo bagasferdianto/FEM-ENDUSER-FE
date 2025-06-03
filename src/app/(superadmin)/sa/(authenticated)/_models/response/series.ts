@@ -27,6 +27,7 @@ export interface Series {
     venue: Venue;
     name: string;
     price: number;
+    matchCount: number;
     startDate: string;
     endDate: string;
     status: StatusEnum;
