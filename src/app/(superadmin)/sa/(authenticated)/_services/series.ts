@@ -3,7 +3,7 @@
 import { useHttp, useHttpMutation } from "react-ohttp";
 import { SeriesResponse, SeriesResponseList } from "../_models/response/series";
 
-export const useGetSeries = (params?: Record<string, any>) => {
+export const useGetSeries = (params?: Record<string, string>) => {
   return useHttp<SeriesResponseList>("/superadmin/series", {
     searchParams: params,
   });
