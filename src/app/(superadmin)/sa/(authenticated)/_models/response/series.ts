@@ -52,7 +52,7 @@ export enum StatusEnum {
 }
 
 export enum StatusRequestEnum {
-    Draft = 1,
-    Active = 2,
-    NonActive = 3,
+    Active = 1,
+    NonActive = 2,
+    Draft = 3,
 }

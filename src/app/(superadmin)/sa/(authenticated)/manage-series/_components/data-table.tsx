@@ -24,7 +24,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useQueryClient } from "react-ohttp";
 import {
   Dialog,
@@ -61,7 +60,6 @@ export function SeriesDataTable({ series }: SeriesDataTableProps) {
 
   const updateStatus = useUpdateSeries();
   const deleteSeries = useDeleteSeries();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const onSubmit = form.handleSubmit((data) => {
@@ -77,7 +75,6 @@ export function SeriesDataTable({ series }: SeriesDataTableProps) {
         onSuccess: () => {
           toast.success("Status series berhasil diubah");
           form.reset();
-          router.push("/sa/manage-series");
           queryClient.invalidateQueries({
             queryKey: ["/superadmin/series"],
           });
@@ -208,7 +205,7 @@ export function SeriesDataTable({ series }: SeriesDataTableProps) {
                         onSubmit();
                       }}
                     >
-                      <Badge className="bg-gray-500 hover:bg-gray-600 rounded-full text-white">
+                      <Badge className="bg-red-500 hover:bg-red-600 rounded-full text-white">
                         Non-Active
                       </Badge>
                     </DropdownMenuItem>
