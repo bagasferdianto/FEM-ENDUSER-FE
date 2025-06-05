@@ -55,7 +55,7 @@ export enum StatusEnum {
 }
 
 export enum StatusRequestEnum {
-    ComingSoon = 1,
-    Active = 2,
-    NonActive = 3,
+    Active = 1,
+    NonActive = 2,
+    ComingSoon = 3,
 }

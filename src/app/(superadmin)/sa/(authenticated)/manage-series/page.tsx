@@ -37,7 +37,7 @@ export default function ManageSeriesPage() {
     }
   }, [season, router, isFetching]);
 
-  const { data: series, isFetching: isFetchingSeries } = useGetSeries({
+  const { data: series } = useGetSeries({
     page: page.toString(),
     sort: "status",
     dir: "asc",
@@ -49,7 +49,7 @@ export default function ManageSeriesPage() {
   const itemsPerPage = series?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  if (isFetching || isFetchingSeries) {
+  if (isFetching) {
     return (
       <SuperadminLayout>
         <div className="flex items-center justify-center h-64">
