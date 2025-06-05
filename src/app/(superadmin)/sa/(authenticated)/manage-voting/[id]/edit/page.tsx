@@ -176,7 +176,7 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
     );
   };
 
-  if (isLoading) {
+  if (isLoading && isFetchingSeason) {
     return (
       <SuperadminLayout>
         <div className="flex items-center justify-center h-64">

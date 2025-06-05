@@ -8,7 +8,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-export function DatePicker({ value, onChange }: { value?: Date; onChange: (date: Date) => void }) {
+export function DatePicker({ value, onChange, className}: { value?: Date; onChange: (date: Date) => void; className?: string }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -16,6 +16,7 @@ export function DatePicker({ value, onChange }: { value?: Date; onChange: (date:
           variant={"outline"}
           className={cn(
             "w-[240px] justify-between text-left font-normal",
+            className,
             !value && "text-muted-foreground"
           )}
         >

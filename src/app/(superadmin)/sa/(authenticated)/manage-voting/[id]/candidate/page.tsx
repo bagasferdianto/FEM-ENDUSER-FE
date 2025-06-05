@@ -7,11 +7,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useGetVotingById } from "../../../_services/voting";
 import { Button } from "@/components/ui/button";
-import { PaginationControls } from "@/components/pagination/page";
 import CandidatesDataTable from "../../_components/data-table-candidate";
 import {
   useCreateCandidate,
-  useGetCandidateById,
   useGetCandidates,
 } from "../../../_services/candidate";
 import { useState } from "react";
@@ -26,7 +24,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
   RequiredLabel,
 } from "@/components/ui/form";
@@ -118,25 +115,23 @@ export default function ManageCandidatePage() {
     );
   };
 
-  if (!votingId) {
-    // Handle error
-    return <div>ID voting tidak ditemukan.</div>;
-  }
-
   const seasonTeamPlayer = useGetPlayingPlayers({
     sort: "createdAt",
     dir: "desc",
     limit: "1000",
   });
-
   const seasonTeamPlayers = seasonTeamPlayer.data?.data?.list || [];
 
   const { data: votingData, isFetching } = useGetVotingById(votingId);
   const [openModal, setOpenModal] = useState(false);
 
   const { data: candidateData } = useGetCandidates({ votingId: votingId });
-
   const totalItems = candidateData?.data?.total || 0;
+
+  if (!votingId) {
+    // Handle error
+    return <div>ID voting tidak ditemukan.</div>;
+  }
 
   if (isFetching) {
     return (
