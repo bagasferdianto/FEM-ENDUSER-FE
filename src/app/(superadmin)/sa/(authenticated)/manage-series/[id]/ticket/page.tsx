@@ -44,14 +44,14 @@ export default function TicketPage({ params }: TicketPageProps) {
   }, [series]);
 
   // paginate ticket
-  const tickets = useGetTickets({
-    sort: "createdAt",
-    dir: "desc",
+  const { data: tickets, isFetching: isFetchingTickets } = useGetTickets({
+    sort: "date",
+    dir: "asc",
     limit: "1000",
     seriesId: series?.data?.id || "none",
   });
-  const ticketsList = tickets.data?.data?.list || [];
-  const totalItems = tickets.data?.data?.total || 0;
+  const ticketsList = tickets?.data?.list || [];
+  const totalItems = tickets?.data?.total || 0;
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState<Ticket | null>(null);
@@ -91,7 +91,7 @@ export default function TicketPage({ params }: TicketPageProps) {
     }
   };
 
-  if (isFetching) {
+  if (isFetching || isFetchingTickets) {
     return (
       <SuperadminLayout>
         <div className="flex items-center justify-center h-64">
@@ -144,12 +144,15 @@ export default function TicketPage({ params }: TicketPageProps) {
                     <h1 className="text-2xl font-bold">{ticket.name}</h1>
                     <Tag className="h-4 w-4" strokeWidth={0.5} />
                     <p className="text-gray-700">
-                      Harga Tiket Series :{formatRupiah(ticket.price || 0)}
+                      Harga Tiket :{formatRupiah(ticket.price || 0)}
                     </p>
                     <CalendarDays className="h-4 w-4" strokeWidth={0.5} />
                     <p className="text-gray-700">{formatDate(ticket.date)}</p>
                   </div>
-                  <Button className="text-white bg-red-600" onClick={() => handleDeleteClick(ticket)}>
+                  <Button
+                    className="text-white bg-red-600"
+                    onClick={() => handleDeleteClick(ticket)}
+                  >
                     <Trash2 className="h-4 w-4 text-white" />
                     Hapus Match Day
                   </Button>

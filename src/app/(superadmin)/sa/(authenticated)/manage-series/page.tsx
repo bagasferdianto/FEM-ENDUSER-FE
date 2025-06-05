@@ -37,25 +37,25 @@ export default function ManageSeriesPage() {
     }
   }, [season, router, isFetching]);
 
-  const series = useGetSeries({
+  const { data: series, isFetching: isFetchingSeries } = useGetSeries({
     page: page.toString(),
-    sort: "createdAt",
-    dir: "desc",
+    sort: "status",
+    dir: "asc",
     seasonId: activeSeason?.id || "none",
   });
 
-  const seriesList = series.data?.data?.list || [];
-  const totalItems = series.data?.data?.total || 0;
-  const itemsPerPage = series.data?.data?.limit || 0;
+  const seriesList = series?.data?.list || [];
+  const totalItems = series?.data?.total || 0;
+  const itemsPerPage = series?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  if (isFetching) {
+  if (isFetching || isFetchingSeries) {
     return (
       <SuperadminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-pfl mx-auto"></div>
-            <p className="mt-2 text-gray-600">Memuat data season...</p>
+            <p className="mt-2 text-gray-600">Memuat data series...</p>
           </div>
         </div>
       </SuperadminLayout>

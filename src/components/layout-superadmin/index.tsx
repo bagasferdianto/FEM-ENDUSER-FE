@@ -9,16 +9,18 @@ export default function SuperadminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider defaultOpen={true}>
-      <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-col h-screen">
-          <AppHeader />
-          <main className="flex-1 p-6 bg-gray-50 overflow-auto">
-            {children}
-          </main>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="max-h-screen overflow-hidden">
+      <SidebarProvider defaultOpen={true}>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex flex-col max-h-screen overflow-hidden">
+            <AppHeader />
+            <main className="flex-1 p-6 overflow-auto">
+              {children}
+            </main>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

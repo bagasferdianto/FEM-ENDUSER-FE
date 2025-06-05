@@ -22,6 +22,10 @@ import { toast } from "sonner";
 import Cookies from "js-cookie";
 
 export default function SignInPage() {
+  if (Cookies.get("auth_token")) {
+    location.href = "/sa/dashboard";
+  }
+  
   const schema = z.object({
     email: z.string().nonempty("Email wajib diisi").email("Email tidak valid"),
     password: z.string().nonempty("Password wajib diisi"),
