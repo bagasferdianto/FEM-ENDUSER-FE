@@ -53,7 +53,7 @@ export function ManageTeamsDialog({ open, onOpenChange }: Props) {
 
   const teamsList = teamsData || [];
   const totalItems = teams?.data?.total || 0;
-  const itemsPerPage = teams?.data?.limit || 0;
+  const itemsPerPage = teams?.data?.limit || 10;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // handle manage teams
