@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -20,37 +20,49 @@ import { useHttpMutation } from "react-ohttp";
 import { SignInResponse } from "./_models/response/sign-in";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SignInPage() {
-  if (Cookies.get("auth_token")) {
-    location.href = "/sa/dashboard";
-  }
-  
+  // get callback url
+  const router = useRouter();
+  const searchParam = useSearchParams();
+  const callbackUrl = decodeURIComponent(
+    searchParam.get("callbackUrl") || "/sa/dashboard"
+  );
+
+  // if already have token redirect
+  useEffect(() => {
+    const token = Cookies.get("auth_token");
+    if (token) {
+      router.push(callbackUrl);
+    }
+  }, [callbackUrl, router]);
+
   const schema = z.object({
     email: z.string().nonempty("Email wajib diisi").email("Email tidak valid"),
     password: z.string().nonempty("Password wajib diisi"),
   });
 
-  const signInMutation = useHttpMutation<z.infer<typeof schema>, SignInResponse>(
-    "/superadmin/auth/login",
-    {
-      method: "POST",
-      queryOptions: {
-        onError: (error) => {
-          form.setError("email", {
-            type: "server",
-            message: error?.data?.message || "Terjadi kesalahan",
-          });
-        },
-        onSuccess: (data) => {
-          Cookies.set("auth_token", data.data.token);
-          toast.success("Login berhasil");
-          location.href = "/sa/dashboard";
-          console.log(data);
-        },
+  const signInMutation = useHttpMutation<
+    z.infer<typeof schema>,
+    SignInResponse
+  >("/superadmin/auth/login", {
+    method: "POST",
+    queryOptions: {
+      onError: (error) => {
+        form.setError("email", {
+          type: "server",
+          message: error?.data?.message || "Terjadi kesalahan",
+        });
       },
-    }
-  );
+      onSuccess: (data) => {
+        Cookies.set("auth_token", data.data.token);
+        toast.success("Login berhasil");
+        router.push(callbackUrl);
+      },
+    },
+  });
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

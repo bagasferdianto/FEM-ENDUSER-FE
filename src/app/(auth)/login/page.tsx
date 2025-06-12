@@ -20,15 +20,21 @@ import { useHttpMutation } from "react-ohttp";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { LogInResponse } from "./_models/response/log-in";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+  // get callback url
+  const router = useRouter();
+  const searchParam = useSearchParams();
+  const callbackUrl = decodeURIComponent(searchParam.get("callbackUrl") || "/");
+
   const schema = z.object({
     email: z.string().nonempty("Email wajib diisi").email("Email tidak valid"),
     password: z.string().nonempty("Password wajib diisi"),
   });
 
   const loginMutation = useHttpMutation<z.infer<typeof schema>, LogInResponse>(
-    "/member/auth/login", 
+    "/member/auth/login",
     {
       method: "POST",
       queryOptions: {
@@ -41,7 +47,7 @@ export default function LoginPage() {
         onSuccess: (data) => {
           Cookies.set("auth_token", data.data.token);
           toast.success("Login berhasil");
-          location.href = "/";
+          router.push(callbackUrl);
         },
       },
     }
