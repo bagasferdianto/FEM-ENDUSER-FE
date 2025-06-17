@@ -22,6 +22,7 @@ export interface Data {
 export interface Player {
     id: string;
     name: string;
+    stageName: string | null;
     createdAt: string;
     updatedAt: string;
 }
