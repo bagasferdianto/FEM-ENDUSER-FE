@@ -2,8 +2,16 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { RequiredLabel } from "./form";
-import { Files, FolderSearch2 } from "lucide-react";
+import { Files, FolderSearch2, Search, X } from "lucide-react";
 import { toast } from "sonner";
+import { useSearchOnEnter } from "@/hooks/use-search-on-enter";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
+import { Button } from "./button";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -137,6 +145,90 @@ function FileUpload({
         )}
       </div>
     </div>
+  );
+}
+
+interface SearchInputProps {
+  placeholder?: string;
+  onSearch: (searchTerm: string) => void;
+  onPageReset?: () => void;
+  initialValue?: string;
+  showSearchButton?: boolean;
+  showClearButton?: boolean;
+  className?: string;
+  tooltipText?: string;
+}
+
+export function SearchInput({
+  placeholder = "Cari...",
+  onSearch,
+  onPageReset,
+  initialValue = "",
+  showSearchButton = false,
+  showClearButton = false,
+  className = "",
+  tooltipText = "Tekan Enter untuk mencari",
+}: SearchInputProps) {
+  const {
+    inputValue,
+    handleKeyDown,
+    handleSearch,
+    handleClear,
+    handleInputChange,
+    hasActiveSearch,
+  } = useSearchOnEnter({
+    initialValue,
+    onSearch,
+    onPageReset,
+  });
+
+  return (
+    <TooltipProvider>
+      <div className={`flex items-center gap-2 ${className}`}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+              />
+
+              <Input
+                placeholder={placeholder}
+                value={inputValue}
+                onChange={(e) => handleInputChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="min-w-[300px] pl-10 pr-4"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-white">
+            {tooltipText}
+          </TooltipContent>
+        </Tooltip>
+
+        {showSearchButton && (
+          <Button
+            onClick={handleSearch}
+            size="sm"
+            variant="outline"
+            className="px-3"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        )}
+
+        {showClearButton && hasActiveSearch && (
+          <Button
+            onClick={handleClear}
+            size="sm"
+            variant="ghost"
+            className="px-3"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }
 
