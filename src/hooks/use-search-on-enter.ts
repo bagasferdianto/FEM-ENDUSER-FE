@@ -17,6 +17,7 @@ export function useSearchOnEnter(options: UseSearchOnEnterOptions = {}) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
+      e.stopPropagation()
       if (e.key === "Enter") {
         setSearchTerm(inputValue)
         onSearch?.(inputValue)
