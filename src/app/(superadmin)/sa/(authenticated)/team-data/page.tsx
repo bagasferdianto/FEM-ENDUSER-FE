@@ -3,9 +3,8 @@
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
 import { useCreateTeam, useGetTeams } from "../_services/team";
-import { Loader2, PackageOpen, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import TeamCard from "@/components/ui/team-card";
-import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import { PaginationControls } from "@/components/pagination/page";
 import {
@@ -26,22 +25,37 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FileUpload, Input } from "@/components/ui/input";
+import { FileUpload, Input, SearchInput } from "@/components/ui/input";
 import { useQueryClient } from "react-ohttp";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
 
 export default function TeamDataPage() {
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
   // pagination
   const [page, setPage] = useState(1);
-  const teams = useGetTeams({
+  const { data: teams, isFetching } = useGetTeams({
     page: page.toString(),
     sort: "createdAt",
     dir: "desc",
+    search: search,
   });
 
-  const teamsList = teams.data?.data?.list || [];
-  const totalItems = teams.data?.data?.total || 0;
-  const itemsPerPage = teams.data?.data?.limit || 0;
+  const teamsList = teams?.data?.list || [];
+  const totalItems = teams?.data?.total || 0;
+  const itemsPerPage = teams?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   // handle dialog create
   const [openModal, setOpenModal] = useState(false);
@@ -122,31 +136,34 @@ export default function TeamDataPage() {
             <h1 className="text-2xl font-bold text-gray-900">Data Tim</h1>
           </div>
 
-          <Button
-            className="gap-2 text-white bg-blue-pfl"
-            onClick={() => {
-              form.reset();
-              setOpenModal(true);
-            }}
-          >
-            Tambah Data Team
-            <Plus className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <SearchInput
+              placeholder="Cari Tim berdasarkan nama tim"
+              onSearch={handleSearch}
+              onPageReset={handlePageReset}
+            />
+            <Button
+              className="gap-2 text-white bg-blue-pfl"
+              onClick={() => {
+                form.reset();
+                setOpenModal(true);
+              }}
+            >
+              Tambah Data Team
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Teams Grid */}
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Team
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Silahkan Tambahkan Data Team Baru
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching ? (
+          <LoadingCard loadingMessage="Sedang memuat data tim..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Tim"
+            emptyMessage="Silahkan Tambahkan Data Tim Baru"
+          />
         ) : (
           <div className="space-y-2 ">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-6">

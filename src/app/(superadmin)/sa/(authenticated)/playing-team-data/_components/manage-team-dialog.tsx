@@ -12,14 +12,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useManagePlayingTeam } from "../../_services/playing-team";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PaginationControls } from "@/components/pagination/page";
 import { Loader2, Plus } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
 import { useQueryClient } from "react-ohttp";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
 
 interface Props {
   open: boolean;
@@ -32,29 +33,39 @@ export function ManageTeamsDialog({ open, onOpenChange }: Props) {
   const [page, setPage] = useState(1);
   const [initialSelectedIds, setInitialSelectedIds] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-
-  const debounceSearch = useDebounce(search, 500);
+  const hasActiveSearch = search.trim().length > 0;
 
   const { data: teams, isFetching } = useGetTeams({
     page: page.toString(),
     sort: "createdAt",
     dir: "desc",
     seasonId: "active",
-    search: debounceSearch,
+    search: search,
   });
 
   useEffect(() => {
+    if (!open) {
+      setSearch("");
+      setPage(1);
+    }
     if (!isFetching) {
       setTeams(teams?.data?.list || []);
       const selected = teamsData.filter((t) => t.isSelected).map((t) => t.id);
       setInitialSelectedIds(selected);
     }
-  }, [isFetching, teams, teamsData]);
+  }, [isFetching, teams, teamsData, open]);
 
   const teamsList = teamsData || [];
   const totalItems = teams?.data?.total || 0;
   const itemsPerPage = teams?.data?.limit || 10;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   // handle manage teams
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,7 +137,7 @@ export function ManageTeamsDialog({ open, onOpenChange }: Props) {
           form.reset();
           queryClient.invalidateQueries({
             queryKey: ["/superadmin/season-teams"],
-          })
+          });
           onOpenChange(false);
           setIsSubmitting(false);
         },
@@ -147,48 +158,59 @@ export function ManageTeamsDialog({ open, onOpenChange }: Props) {
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <Input
+          <SearchInput
             placeholder="Cari Tim"
-            value={search as string}
-            onChange={(e) => setSearch(e.target.value)}
+            onSearch={handleSearch}
+            onPageReset={handlePageReset}
           />
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 flex flex-col justify-center items-center"
           >
-            <div className="max-h-[300px] overflow-y-auto space-y-4 w-full">
-              {teamsList.map((team) => {
-                const checked = (() => {
-                  if (initialSelectedIds.includes(team.id)) {
-                    return !watch("removedTeamIds").includes(team.id);
-                  } else {
-                    return watch("addedTeamIds").includes(team.id);
-                  }
-                })();
+            {isFetching ? (
+              <LoadingCard loadingMessage="Sedang memuat data tim..." />
+            ) : totalItems === 0 ? (
+              <EmptyCard
+                searchActive={hasActiveSearch}
+                searchText={search}
+                emptyTitle="Belum Ada Tim"
+                emptyMessage="Tambahkan Tim Baru Untuk Memulai"
+              />
+            ) : (
+              <div className="max-h-[300px] overflow-y-auto space-y-4 w-full">
+                {teamsList.map((team) => {
+                  const checked = (() => {
+                    if (initialSelectedIds.includes(team.id)) {
+                      return !watch("removedTeamIds").includes(team.id);
+                    } else {
+                      return watch("addedTeamIds").includes(team.id);
+                    }
+                  })();
 
-                return (
-                  <div key={team.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={team.id}
-                      checked={checked}
-                      onCheckedChange={(value) =>
-                        handleToggle(team, value as boolean)
-                      }
-                    />
-                    <Image
-                      src={team.logo.url}
-                      alt={`Logo ${team.name}`}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded"
-                    />
-                    <label htmlFor={team.id} className="text-sm font-medium">
-                      {team.name}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div key={team.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={team.id}
+                        checked={checked}
+                        onCheckedChange={(value) =>
+                          handleToggle(team, value as boolean)
+                        }
+                      />
+                      <Image
+                        src={team.logo.url}
+                        alt={`Logo ${team.name}`}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded"
+                      />
+                      <label htmlFor={team.id} className="text-sm font-medium">
+                        {team.name}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <PaginationControls
               currentPage={page}
               totalPages={totalPages}

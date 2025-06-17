@@ -2,8 +2,7 @@
 
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, PackageOpen, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { useCreatePlayer, useGetPlayers } from "../_services/player";
 import { PlayersDataTable } from "./_components/data-table";
@@ -27,22 +26,37 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Input, SearchInput } from "@/components/ui/input";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
 
 export default function ManagePlayerPage() {
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
   // pagination
   const [page, setPage] = useState(1);
 
-  const players = useGetPlayers({
+  const { data: players, isFetching } = useGetPlayers({
     page: page.toString(),
     sort: "createdAt",
     dir: "desc",
+    search: search,
   });
 
-  const playersList = players.data?.data?.list || [];
-  const totalItems = players.data?.data?.total || 0;
-  const itemsPerPage = players.data?.data?.limit || 0;
+  const playersList = players?.data?.list || [];
+  const totalItems = players?.data?.total || 0;
+  const itemsPerPage = players?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // handle search
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   // handle dialog create
   const [openModal, setOpenModal] = useState(false);
@@ -53,6 +67,7 @@ export default function ManagePlayerPage() {
 
   const schema = z.object({
     name: z.string().nonempty("Nama player wajib diisi"),
+    stageName: z.string().nullable().optional(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -61,6 +76,7 @@ export default function ManagePlayerPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      stageName: undefined,
     },
   });
 
@@ -111,30 +127,35 @@ export default function ManagePlayerPage() {
     <SuperadminLayout>
       <div className="space-y-6 max-w-full">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">
-            Daftar Player
-          </h1>
-          <Button
-            className="gap-2 text-white bg-blue-pfl"
-            onClick={() => setOpenModal(true)}
-          >
-            Tambah Data Player
-            <Plus className="h-4 w-4" />
-          </Button>
+          <h1 className="text-2xl font-bold">Daftar Player</h1>
+          <div className="flex items-center gap-2">
+            <SearchInput
+              placeholder="Cari Player berdasarkan nama/nama panggung"
+              onSearch={handleSearch}
+              onPageReset={handlePageReset}
+            />
+            <Button
+              className="gap-2 text-white bg-blue-pfl"
+              onClick={() => {
+                setOpenModal(true);
+                form.reset();
+              }}
+            >
+              Tambah Data Player
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Player
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Silahkan Tambahkan Data Player Baru
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching ? (
+          <LoadingCard loadingMessage="Sedang memuat data player..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Player"
+            emptyMessage="Silahkan Tambahkan Data Player Baru"
+          />
         ) : (
           <div className="space-y-4">
             <PlayersDataTable players={playersList} />
@@ -169,6 +190,28 @@ export default function ManagePlayerPage() {
                     <FormLabel>Masukkan Nama Player</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Nama Lengkap Player" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="stageName"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Masukkan Nama Panggung (opsional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          field.onChange(val === "" ? null : val);
+                        }}
+                        placeholder="Nama Panggung Player"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

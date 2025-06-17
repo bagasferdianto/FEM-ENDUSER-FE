@@ -33,8 +33,7 @@ import {
 } from "@/components/ui/select";
 import { useGetPlayers } from "../../../../_services/player";
 import { Button } from "@/components/ui/button";
-import { FileUpload, Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/use-debounce";
+import { FileUpload, SearchInput } from "@/components/ui/input";
 
 const schema = z.object({
   playerId: z.string().nonempty("Pemain wajib diisi"),
@@ -62,14 +61,17 @@ export default function CreatePlayingPlayerForm({
 
   // get players for dropdown
   const [search, setSearch] = useState("");
-  const debounceSearch = useDebounce(search, 500);
   const players = useGetPlayers({
     sort: "createdAt",
     dir: "desc",
     limit: "1000",
-    search: debounceSearch,
+    search: search,
   });
   const playersList = players.data?.data?.list || [];
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
 
   // get player positions for dropdown
   const { data: positionsData } = useGetPlayerPositions({});
@@ -176,17 +178,16 @@ export default function CreatePlayingPlayerForm({
                       </FormControl>
                       <SelectContent className="max-h-60 overflow-y-auto w-full">
                         <div className="px-2 py-1">
-                          <Input
+                          <SearchInput
                             placeholder="Cari player..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            onKeyDown={(e) => e.stopPropagation()}
+                            onSearch={handleSearch}
                             className="w-full"
                           />
                         </div>
                         {playersList.map((player) => (
                           <SelectItem key={player.id} value={player.id}>
-                            {player.name}
+                            {player.name}{" "}
+                            {player.stageName && `(${player.stageName})`}
                           </SelectItem>
                         ))}
                       </SelectContent>

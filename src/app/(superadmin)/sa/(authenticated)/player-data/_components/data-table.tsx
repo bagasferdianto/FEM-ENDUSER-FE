@@ -51,6 +51,7 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
   // handle update dialog
   const schema = z.object({
     name: z.string().nonempty("Nama player wajib diisi"),
+    stageName: z.string().nullable().optional(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -60,6 +61,7 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      stageName: undefined,
     },
   });
 
@@ -72,6 +74,7 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
 
   const setUpdateForm = (data: Player) => {
     form.setValue("name", data.name);
+    form.setValue("stageName", data.stageName ?? null);
     setId(data.id);
     setOpenModal(true);
   };
@@ -163,16 +166,30 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-1/5 text-muted-foreground">No</TableHead>
-            <TableHead className="w-1/2 text-muted-foreground">Nama Lengkap</TableHead>
-            <TableHead className="w-1/2 text-muted-foreground">Tanggal Ditambahkan</TableHead>
+            <TableHead className="w-1/2 text-muted-foreground">
+              Nama Lengkap
+            </TableHead>
+            <TableHead className="w-1/2 text-muted-foreground">
+              Nama Panggung
+            </TableHead>
+            <TableHead className="w-1/2 text-muted-foreground">
+              Tanggal Ditambahkan
+            </TableHead>
             <TableHead className="w-1/12 text-muted-foreground text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {players.map((player, index) => (
             <TableRow key={player.id}>
-              <TableCell className="truncate max-w-xs font-medium">{index + 1}</TableCell>
-              <TableCell className="truncate max-w-xs font-medium">{player.name}</TableCell>
+              <TableCell className="truncate max-w-xs font-medium">
+                {index + 1}
+              </TableCell>
+              <TableCell className="truncate max-w-xs font-medium">
+                {player.name}
+              </TableCell>
+              <TableCell className="truncate max-w-xs font-medium">
+                {player.stageName ?? "-"}
+              </TableCell>
               <TableCell className="truncate max-w-xs font-medium">
                 {formatDate(player.createdAt)}
               </TableCell>
@@ -225,6 +242,28 @@ export function PlayersDataTable({ players }: PlayersDataTableProps) {
                     <FormLabel>Masukkan Nama Player</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Nama Lengkap Player" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="stageName"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Masukkan Nama Panggung (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          field.onChange(val === "" ? null : val);
+                        }}
+                        placeholder="Nama Panggung Player"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

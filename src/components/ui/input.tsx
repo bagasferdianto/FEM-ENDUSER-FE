@@ -187,7 +187,7 @@ export function SearchInput({
       <div className={`flex items-center gap-2 ${className}`}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="relative">
+            <div className="relative w-full">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
               />
@@ -197,7 +197,7 @@ export function SearchInput({
                 value={inputValue}
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="min-w-[300px] pl-10 pr-4"
+                className="min-w-[300px] w-full pl-10 pr-4"
               />
             </div>
           </TooltipTrigger>

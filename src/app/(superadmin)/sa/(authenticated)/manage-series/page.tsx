@@ -2,8 +2,7 @@
 
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { PackageOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SeriesDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
@@ -13,6 +12,9 @@ import { useGetActiveSeason } from "../_services/season";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Season } from "../_models/response/season";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
+import { SearchInput } from "@/components/ui/input";
 
 export default function ManageSeriesPage() {
   const [page, setPage] = useState(1);
@@ -37,11 +39,16 @@ export default function ManageSeriesPage() {
     }
   }, [season, router, isFetching]);
 
-  const { data: series } = useGetSeries({
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
+  const { data: series, isFetching: isFetchingSeries } = useGetSeries({
     page: page.toString(),
     sort: "status",
     dir: "asc",
     seasonId: activeSeason?.id || "none",
+    search: search,
   });
 
   const seriesList = series?.data?.list || [];
@@ -49,18 +56,13 @@ export default function ManageSeriesPage() {
   const itemsPerPage = series?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  if (isFetching) {
-    return (
-      <SuperadminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-pfl mx-auto"></div>
-            <p className="mt-2 text-gray-600">Memuat data series...</p>
-          </div>
-        </div>
-      </SuperadminLayout>
-    );
-  }
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   return (
     <SuperadminLayout>
@@ -69,31 +71,38 @@ export default function ManageSeriesPage() {
           <h1 className="text-2xl font-bold">
             Daftar Series Pro Futsal League
           </h1>
-          <Link href={"/sa/manage-series/create"}>
-            <Button className="gap-2 text-white bg-blue-pfl">
-              Tambah Series Baru
-              <Plus className="h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <SearchInput
+              placeholder="Cari Series berdasarkan nama series"
+              onSearch={handleSearch}
+              onPageReset={handlePageReset}
+            />
+            <Link href={"/sa/manage-series/create"}>
+              <Button className="gap-2 text-white bg-blue-pfl">
+                Tambah Series Baru
+                <Plus className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Series
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Tambahkan Series Baru Untuk Membuat Data Series
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching || isFetchingSeries ? (
+          <LoadingCard loadingMessage="Sedang memuat data series..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Series"
+            emptyMessage="Tambahkan Series Baru Untuk Membuat Data Series"
+          />
         ) : (
           <div className="space-y-4">
             <SeriesDataTable series={seriesList} />
 
             <div className="flex items-start justify-between">
+              <p className="text-sm">
+                *note : Klik badge status untuk mengubah status series
+              </p>
               <PaginationControls
                 currentPage={page}
                 totalPages={totalPages}

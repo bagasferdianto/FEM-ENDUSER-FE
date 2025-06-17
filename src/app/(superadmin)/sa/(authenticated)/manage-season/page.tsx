@@ -47,13 +47,11 @@ export default function ManageSeasonPage() {
             Daftar Season Pro Futsal League
           </h1>
           <div className="flex items-center gap-2">
-            <div className="relative">
-              <SearchInput
-                placeholder="Cari Season berdasarkan nama season"
-                onSearch={handleSearch}
-                onPageReset={handlePageReset}
-              />
-            </div>
+            <SearchInput
+              placeholder="Cari Season berdasarkan nama season"
+              onSearch={handleSearch}
+              onPageReset={handlePageReset}
+            />
             <Link href={"/sa/manage-season/create"}>
               <Button className="gap-2 text-white bg-blue-pfl">
                 Tambah Season Baru
