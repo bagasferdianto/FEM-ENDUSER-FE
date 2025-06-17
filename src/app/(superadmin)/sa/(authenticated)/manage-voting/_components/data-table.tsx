@@ -123,7 +123,7 @@ export function VotingsDataTable({ votings }: VotingsDataTableProps) {
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/4 text-muted-foreground">
+            <TableHead className="w-1/5 text-muted-foreground">
               Judul Voting
             </TableHead>
             <TableHead className="w-[10%] text-muted-foreground">

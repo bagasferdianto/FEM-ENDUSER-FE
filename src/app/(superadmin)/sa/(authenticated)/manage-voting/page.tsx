@@ -9,20 +9,37 @@ import { useGetVotings } from "../_services/voting";
 import { VotingsDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
 import Link from "next/link";
+import { SearchInput } from "@/components/ui/input";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
 
 export default function ManageVotingPage() {
   const [page, setPage] = useState(1);
 
-  const votings = useGetVotings({
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
+  // get data
+  const { data: votings, isFetching } = useGetVotings({
     page: page.toString(),
     sort: "status",
     dir: "asc",
+    search: search,
   });
 
-  const votingsList = votings.data?.data?.list || [];
-  const totalItems = votings.data?.data?.total || 0;
-  const itemsPerPage = votings.data?.data?.limit || 0;
+  const votingsList = votings?.data?.list || [];
+  const totalItems = votings?.data?.total || 0;
+  const itemsPerPage = votings?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   return (
     <SuperadminLayout>
@@ -31,26 +48,32 @@ export default function ManageVotingPage() {
           <h1 className="text-2xl font-bold">
             Kelola Voting Pro Futsal League
           </h1>
-          <Link href={"/sa/manage-voting/create"}>
-            <Button className="gap-2 text-white bg-blue-pfl">
-              Tambah Voting Baru
-              <Plus className="h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <SearchInput
+                placeholder="Cari Voting berdasarkan judul voting"
+                onSearch={handleSearch}
+                onPageReset={handlePageReset}
+              />
+            </div>
+            <Link href={"/sa/manage-voting/create"}>
+              <Button className="gap-2 text-white bg-blue-pfl">
+                Tambah Voting Baru
+                <Plus className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Voting
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Tambahkan Voting Baru Untuk Membuat Data Voting
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching ? (
+          <LoadingCard loadingMessage="Sedang memuat data voting..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Voting"
+            emptyMessage="Tambahkan Voting Baru Untuk Membuat Data Voting"
+          />
         ) : (
           <div className="space-y-4">
             <VotingsDataTable votings={votingsList} />
