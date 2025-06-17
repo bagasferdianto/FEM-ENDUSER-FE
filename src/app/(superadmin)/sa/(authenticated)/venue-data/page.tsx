@@ -2,8 +2,7 @@
 
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, PackageOpen, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { VenuesDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
@@ -26,23 +25,37 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Input, SearchInput } from "@/components/ui/input";
 import { useCreateVenue, useGetVenues } from "../_services/venue";
+import LoadingCard from "@/components/ui/loading";
+import EmptyCard from "@/components/ui/empty-card";
 
 export default function ManageVenuePage() {
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
   // pagination
   const [page, setPage] = useState(1);
 
-  const venues = useGetVenues({
+  const { data: venues, isFetching } = useGetVenues({
     page: page.toString(),
     sort: "createdAt",
     dir: "desc",
+    search: search,
   });
 
-  const venuesList = venues.data?.data?.list || [];
-  const totalItems = venues.data?.data?.total || 0;
-  const itemsPerPage = venues.data?.data?.limit || 0;
+  const venuesList = venues?.data?.list || [];
+  const totalItems = venues?.data?.total || 0;
+  const itemsPerPage = venues?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   // handle dialog create
   const [openModal, setOpenModal] = useState(false);
@@ -112,27 +125,32 @@ export default function ManageVenuePage() {
       <div className="space-y-6 max-w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Daftar Venue/Tempat</h1>
-          <Button
-            className="gap-2 text-white bg-blue-pfl"
-            onClick={() => setOpenModal(true)}
-          >
-            Tambah Data Venue
-            <Plus className="h-4 w-4" />
-          </Button>
+
+          <div className="flex items-center gap-2">
+            <SearchInput
+              placeholder="Cari Venue berdasarkan nama venue"
+              onSearch={handleSearch}
+              onPageReset={handlePageReset}
+            />
+            <Button
+              className="gap-2 text-white bg-blue-pfl"
+              onClick={() => setOpenModal(true)}
+            >
+              Tambah Data Venue
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Venue/Tempat
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Silahkan Tambahkan Data Venue/Tempat
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching ? (
+          <LoadingCard loadingMessage="Sedang memuat data venue..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Venue/Tempat"
+            emptyMessage="Silahkan Tambahkan Data Venue/Tempat"
+          />
         ) : (
           <div className="space-y-2 flex flex-col justify-center items-center">
             <VenuesDataTable venues={venuesList} />
