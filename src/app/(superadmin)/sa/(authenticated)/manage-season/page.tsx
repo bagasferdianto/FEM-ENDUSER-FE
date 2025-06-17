@@ -2,27 +2,42 @@
 
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { PackageOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useGetSeasons } from "../_services/season";
 import { SeasonsDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
 import Link from "next/link";
+import { SearchInput } from "@/components/ui/input";
+import EmptyCard from "@/components/ui/empty-card";
+import LoadingCard from "@/components/ui/loading";
 
 export default function ManageSeasonPage() {
   const [page, setPage] = useState(1);
 
-  const seasons = useGetSeasons({
+  // search
+  const [search, setSearch] = useState("");
+  const hasActiveSearch = search.trim().length > 0;
+
+  const { data: seasons, isFetching } = useGetSeasons({
     page: page.toString(),
     sort: "status",
     dir: "asc",
+    search: search,
   });
 
-  const seasonsList = seasons.data?.data?.list || [];
-  const totalItems = seasons.data?.data?.total || 0;
-  const itemsPerPage = seasons.data?.data?.limit || 0;
+  const seasonsList = seasons?.data?.list || [];
+  const totalItems = seasons?.data?.total || 0;
+  const itemsPerPage = seasons?.data?.limit || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+  };
+
+  const handlePageReset = () => {
+    setPage(1);
+  };
 
   return (
     <SuperadminLayout>
@@ -31,26 +46,32 @@ export default function ManageSeasonPage() {
           <h1 className="text-2xl font-bold">
             Daftar Season Pro Futsal League
           </h1>
-          <Link href={"/sa/manage-season/create"}>
-            <Button className="gap-2 text-white bg-blue-pfl">
-              Tambah Season Baru
-              <Plus className="h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <SearchInput
+                placeholder="Cari Season berdasarkan nama season"
+                onSearch={handleSearch}
+                onPageReset={handlePageReset}
+              />
+            </div>
+            <Link href={"/sa/manage-season/create"}>
+              <Button className="gap-2 text-white bg-blue-pfl">
+                Tambah Season Baru
+                <Plus className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {totalItems === 0 ? (
-          <Card className="border-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <PackageOpen className="w-16 h-16 mb-4" strokeWidth={0.5} />
-              <h3 className="text-xl font-semibold mb-2">
-                Belum Ada Data Season
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Tambahkan Season Baru Untuk Membuat Data Season
-              </p>
-            </CardContent>
-          </Card>
+        {isFetching ? (
+          <LoadingCard loadingMessage="Sedang memuat data season..." />
+        ) : totalItems === 0 ? (
+          <EmptyCard
+            searchActive={hasActiveSearch}
+            searchText={search}
+            emptyTitle="Belum Ada Data Season"
+            emptyMessage="Tambahkan Season Baru Untuk Membuat Data Season"
+          />
         ) : (
           <div className="space-y-4">
             <SeasonsDataTable seasons={seasonsList} />
