@@ -157,6 +157,12 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
     isFromApi: boolean;
   } | null>(null);
 
+  // randomized match dialog
+  const [randomDialogOpen, setRandomDialogOpen] = useState(false);
+  const [selectedTeamsForRandom, setSelectedTeamsForRandom] = useState<
+    string[]
+  >([]);
+
   // transform response to form data
   const transformRespToData = useCallback(
     (data: TicketResponseList): FormData => {
@@ -248,6 +254,68 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
           time: "00:00",
         },
       ],
+    });
+  };
+
+  // handle random match generation
+  const generateRandomMatches = () => {
+    if (
+      selectedTeamsForRandom.length % 2 !== 0 ||
+      selectedTeamsForRandom.length === 0
+    ) {
+      toast.error("Silahkan pilih jumlah tim yang genap");
+      return;
+    }
+
+    if (selectedTeamsForRandom.length > 10) {
+      toast.error("Maksimal 10 tim (5 pasang pertandingan)");
+      return;
+    }
+
+    // Shuffle the selected teams
+    const shuffledTeams = [...selectedTeamsForRandom].sort(
+      () => Math.random() - 0.5
+    );
+
+    // Create matches from pairs
+    const matches = [];
+    for (let i = 0; i < shuffledTeams.length; i += 2) {
+      matches.push({
+        homeSeasonTeamId: shuffledTeams[i],
+        awaySeasonTeamId: shuffledTeams[i + 1],
+        time: "00:00",
+      });
+    }
+
+    // Add new ticket day with random matches
+    const newDay = ticketFields.length + 1;
+    appendTicket({
+      id: "",
+      apiId: undefined,
+      name: `Day ${newDay}`,
+      date: new Date(),
+      price: 0,
+      quota: 0,
+      matchs: matches,
+    });
+
+    // Reset and close dialog
+    setSelectedTeamsForRandom([]);
+    setRandomDialogOpen(false);
+    toast.success(`Berhasil membuat ${matches.length} pertandingan acak`);
+  };
+
+  const handleTeamToggle = (teamId: string) => {
+    setSelectedTeamsForRandom((prev) => {
+      if (prev.includes(teamId)) {
+        return prev.filter((id) => id !== teamId);
+      } else {
+        if (prev.length >= 10) {
+          toast.error("Maksimal 10 tim yang dapat dipilih");
+          return prev;
+        }
+        return [...prev, teamId];
+      }
     });
   };
 
@@ -486,10 +554,7 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
                         {form
                           .watch(`tickets.${ticketIndex}.matchs`)
                           .map((match, matchIndex) => (
-                            <div
-                              key={matchIndex}
-                              className="space-y-4"
-                            >
+                            <div key={matchIndex} className="space-y-4">
                               <div className="flex items-center justify-between">
                                 <h4 className="font-medium">
                                   Pertandingan {matchIndex + 1}
@@ -618,14 +683,24 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
                 </div>
               );
             })}
-            <Button
-              type="button"
-              onClick={addTicketDay}
-              variant="outline"
-              className="text-white bg-blue-pfl hover:bg-blue-800 mt-4"
-            >
-              Tambah Hari Pertandingan
-            </Button>
+            <div className="flex gap-2 mt-4">
+              <Button
+                type="button"
+                onClick={addTicketDay}
+                variant="outline"
+                className="text-white bg-blue-pfl hover:bg-blue-800"
+              >
+                Tambah Hari Pertandingan
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setRandomDialogOpen(true)}
+                variant="outline"
+                className="text-white bg-slate-400 hover:bg-slate-500"
+              >
+                Tambah Hari Pertandingan Acak
+              </Button>
+            </div>
             <div className="flex w-full justify-end mt-4">
               <Button
                 type="submit"
@@ -641,6 +716,88 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
           </form>
         </Form>
       </div>
+      {/* Randomized Match Dialog */}
+      <Dialog open={randomDialogOpen} onOpenChange={setRandomDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Pilih Tim untuk Pertandingan Acak</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Pilih jumlah tim yang genap (maksimal 10 tim untuk 5
+              pertandingan). Tim yang dipilih akan dipasangkan secara acak.
+            </p>
+
+            <div className="mb-4">
+              <p className="text-sm font-medium">
+                Tim terpilih: {selectedTeamsForRandom.length}/10
+                {selectedTeamsForRandom.length > 0 &&
+                  selectedTeamsForRandom.length % 2 === 0 && (
+                    <span className="text-blue-pfl ml-2">
+                      ({selectedTeamsForRandom.length / 2} pertandingan)
+                    </span>
+                  )}
+                {selectedTeamsForRandom.length > 0 &&
+                  selectedTeamsForRandom.length % 2 !== 0 && (
+                    <span className="text-red-600 ml-2">
+                      (Jumlah tim harus genap)
+                    </span>
+                  )}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto">
+              {seasonTeamsList.map((team) => (
+                <div
+                  key={team.id}
+                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                    selectedTeamsForRandom.includes(team.id)
+                      ? "bg-blue-100 border-blue-pfl"
+                      : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                  }`}
+                  onClick={() => handleTeamToggle(team.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      {team.team.name}
+                    </span>
+                    {selectedTeamsForRandom.includes(team.id) && (
+                      <div className="w-4 h-4 bg-blue-pfl rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRandomDialogOpen(false);
+                setSelectedTeamsForRandom([]);
+              }}
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={generateRandomMatches}
+              disabled={
+                selectedTeamsForRandom.length === 0 ||
+                selectedTeamsForRandom.length % 2 !== 0
+              }
+              className="bg-blue-pfl hover:bg-blue-800 text-white"
+            >
+              Generate{" "}
+              {selectedTeamsForRandom.length > 0 &&
+              selectedTeamsForRandom.length % 2 === 0
+                ? `${selectedTeamsForRandom.length / 2} Pertandingan Acak`
+                : "Pertandingan Acak"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
