@@ -2,8 +2,7 @@
 
 import SuperadminLayout from "@/components/layout-superadmin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { PackageOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useGetVotings } from "../_services/voting";
 import { VotingsDataTable } from "./_components/data-table";
