@@ -10,6 +10,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -20,7 +21,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  RequiredLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,7 +32,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -54,6 +53,14 @@ import {
 } from "@/components/ui/select";
 import { useGetPlayingPlayers } from "../../_services/playing-player";
 
+// RequiredLabel tidak ada di shadcn, saya asumsikan ini adalah komponen custom Anda.
+// Jika tidak, Anda bisa menggantinya dengan FormLabel biasa.
+const RequiredLabel = ({ children }: { children: React.ReactNode }) => (
+  <FormLabel>
+    {children} <span className="text-destructive">*</span>
+  </FormLabel>
+);
+
 interface CandidatesDataTableProps {
   candidates: Candidate[];
 }
@@ -69,21 +76,39 @@ export default function CandidatesDataTable({
   });
 
   const seasonTeamPlayers = seasonTeamPlayer.data?.data?.list || [];
-  // handle update dialog
+
+  // --- CHANGE START: Update Zod Schema ---
   const schema = z.object({
-    seasonTeamPlayerId: z.string().nonempty("Player wajid dipilih"),
-    performance: z.string().nonempty("Performa wajib diisi"),
+    seasonTeamPlayerId: z.string().nonempty("Player wajib dipilih"),
+    performance: z.object({
+      goal: z.coerce
+        .number({ invalid_type_error: "Goal harus berupa angka" })
+        .min(0, "Goal tidak boleh negatif"),
+      assist: z.coerce
+        .number({ invalid_type_error: "Assist harus berupa angka" })
+        .min(0, "Assist tidak boleh negatif"),
+      save: z.coerce
+        .number({ invalid_type_error: "Save harus berupa angka" })
+        .min(0, "Save tidak boleh negatif"),
+    }),
   });
 
   type FormData = z.infer<typeof schema>;
+  // --- CHANGE END: Update Zod Schema ---
 
   const form = useForm<FormData>({
     mode: "all",
     resolver: zodResolver(schema),
+    // --- CHANGE START: Update Default Values ---
     defaultValues: {
       seasonTeamPlayerId: "",
-      performance: "",
+      performance: {
+        goal: 0,
+        assist: 0,
+        save: 0,
+      },
     },
+    // --- CHANGE END: Update Default Values ---
   });
 
   const updateCandidate = useUpdateCandidate();
@@ -93,12 +118,16 @@ export default function CandidatesDataTable({
   const [openModal, setOpenModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // --- CHANGE START: Update setUpdateForm function ---
   const setUpdateForm = (data: Candidate) => {
     form.setValue("seasonTeamPlayerId", data.seasonTeamPlayer.id);
-    form.setValue("performance", data.performance);
+    form.setValue("performance.goal", data.performance.goal);
+    form.setValue("performance.assist", data.performance.assist);
+    form.setValue("performance.save", data.performance.save);
     setId(data.id);
     setOpenModal(true);
   };
+  // --- CHANGE END: Update setUpdateForm function ---
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -106,7 +135,7 @@ export default function CandidatesDataTable({
     updateCandidate.mutate(
       {
         vars: { id: id },
-        body: data,
+        body: data, // Struktur data sudah sesuai dengan schema baru
       },
       {
         onError: (error) => {
@@ -114,12 +143,10 @@ export default function CandidatesDataTable({
             error?.data?.message || "Terjadi kesalahan saat memperbarui player"
           );
 
-          // Handle validation errors
           if (error.status === 422) {
             const validationErrors = error.data.validation as Partial<
               Record<keyof FormData, string>
             >;
-
             Object.entries(validationErrors).forEach(([field, message]) => {
               if (message) {
                 form.setError(field as keyof FormData, {
@@ -132,7 +159,6 @@ export default function CandidatesDataTable({
 
           setIsSubmitting(false);
         },
-
         onSuccess: () => {
           setIsSubmitting(false);
           toast.success("Player berhasil diperbarui");
@@ -190,40 +216,40 @@ export default function CandidatesDataTable({
 
   return (
     <div className="rounded-xl border overflow-x-auto">
+      {/* --- CHANGE START: Update Table Structure --- */}
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[20px]">No</TableHead>
-            <TableHead className="w-[100px]">Nama Player</TableHead>
-            <TableHead className="w-[100px]">Team</TableHead>
-            <TableHead className="w-[100px]">Performa</TableHead>
+            <TableHead className="w-[50px]">No</TableHead>
+            <TableHead className="w-[150px]">Nama Player</TableHead>
+            <TableHead className="w-[150px]">Team</TableHead>
+            <TableHead className="w-[80px]">Goal</TableHead>
+            <TableHead className="w-[80px]">Assist</TableHead>
+            <TableHead className="w-[80px]">Save</TableHead>
+            <TableHead className="w-[80px]">Skor</TableHead>
             <TableHead className="w-[100px]">Total Vote</TableHead>
             <TableHead className="w-[100px]">Presentase</TableHead>
-            <TableHead className="w-[20px] text-right"></TableHead>
+            <TableHead className="w-[50px] text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {candidates.map((candidate, index) => (
             <TableRow key={candidate.id}>
-              <TableCell className="truncate max-w-xs font medium">
-                {index + 1}
-              </TableCell>
-              <TableCell className="truncate max-w-xs font medium">
+              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell className="truncate">
                 {candidate.seasonTeamPlayer.player.name}
               </TableCell>
-              <TableCell className="truncate max-w-xs font medium">
+              <TableCell className="truncate">
                 {candidate.seasonTeam.team.name}
               </TableCell>
-              <TableCell className="truncate max-w-xs font medium">
-                {candidate.performance}
-              </TableCell>
-              <TableCell className="truncate max-w-xs font medium">
-                {candidate.voters.count}
-              </TableCell>
-              <TableCell className="truncate max-w-xs font medium">
-                {candidate.voters.percentage}
-              </TableCell>
+              <TableCell>{candidate.performance.goal}</TableCell>
+              <TableCell>{candidate.performance.assist}</TableCell>
+              <TableCell>{candidate.performance.save}</TableCell>
+              <TableCell>{candidate.performance.score}</TableCell>
+              <TableCell>{candidate.voters.count} Voters</TableCell>
+              <TableCell>{candidate.voters.percentage} %</TableCell>
               <TableCell className="text-right">
+                {/* --- CHANGE END: Update Table Structure --- */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -253,8 +279,9 @@ export default function CandidatesDataTable({
         </TableBody>
       </Table>
 
+      {/* --- CHANGE START: Update Dialog/Modal Content --- */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent className="flex flex-col items-center justify-center">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Update Data Kandidat</DialogTitle>
           </DialogHeader>
@@ -262,21 +289,21 @@ export default function CandidatesDataTable({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col items-center justify-center space-y-4 w-full"
+              className="space-y-4 w-full"
             >
               <FormField
                 control={form.control}
                 name="seasonTeamPlayerId"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <RequiredLabel>Pilih Player</RequiredLabel>
+                    <RequiredLabel>Pilih Player/Pemain</RequiredLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Pilih Player" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="max-h-60 overflow-y-auto w-full">
+                      <SelectContent>
                         {seasonTeamPlayers.map((seasonTeamPlayer) => (
                           <SelectItem
                             key={seasonTeamPlayer.id}
@@ -291,34 +318,85 @@ export default function CandidatesDataTable({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="performance"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Masukkan Performa</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Masukkan Performa" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <Button
-                className="bg-blue-pfl flex items-center justify-center text-white w-min"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Perbarui Kandidat
-              </Button>
+              <div className="space-y-2">
+                <FormLabel>Performa</FormLabel>
+                <FormField
+                  control={form.control}
+                  name="performance.goal"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-4">
+                      <FormLabel className="w-1/2">Jumlah Gol :</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Masukkan Jumlah Gol"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormMessage className="pl-[calc(33.33%+1rem)]" />
+              </div>
+
+              <div className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="performance.assist"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-4">
+                      <FormLabel className="w-1/2">Jumlah Assist :</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Masukkan Jumlah Assist"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormMessage className="pl-[calc(33.33%+1rem)]" />
+              </div>
+
+              <div className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="performance.save"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-4">
+                      <FormLabel className="w-1/2">Jumlah Save :</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Masukkan Jumlah Save"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormMessage className="pl-[calc(33.33%+1rem)]" />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  className="w-full bg-blue-pfl text-white hover:bg-blue-700" 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Perbarui Kandidat
+                </Button>
+              </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
+      {/* --- CHANGE END: Update Dialog/Modal Content --- */}
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>

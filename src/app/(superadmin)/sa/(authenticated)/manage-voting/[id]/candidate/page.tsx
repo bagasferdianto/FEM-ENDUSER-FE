@@ -24,6 +24,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   RequiredLabel,
 } from "@/components/ui/form";
@@ -47,11 +48,22 @@ export default function ManageCandidatePage() {
   const votingId = params?.id as string;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
+  // --- CHANGE START: Update Zod Schema ---
   const schema = z.object({
-    votingId: z.string().nonempty("Voting wajib dipilih"),
     seasonTeamPlayerId: z.string().nonempty("Pemain wajib diisi"),
-    performance: z.string().nonempty("Posisi wajib diisi"),
+    performance: z.object({
+      goal: z.coerce
+        .number({ invalid_type_error: "Goal harus berupa angka" })
+        .min(0, "Goal tidak boleh negatif"),
+      assist: z.coerce
+        .number({ invalid_type_error: "Assist harus berupa angka" })
+        .min(0, "Assist tidak boleh negatif"),
+      save: z.coerce
+        .number({ invalid_type_error: "Save harus berupa angka" })
+        .min(0, "Save tidak boleh negatif"),
+    }),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -59,32 +71,41 @@ export default function ManageCandidatePage() {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      votingId: votingId,
       seasonTeamPlayerId: "",
-      performance: "",
+      performance: {
+        goal: 0,
+        assist: 0,
+        save: 0,
+      },
     },
   });
+  // --- CHANGE END: Update Zod Schema ---
 
   const queryClient = useQueryClient();
   const createCandidate = useCreateCandidate();
 
+  // --- CHANGE START: Update onSubmit Logic ---
   const onSubmit = (data: FormData) => {
     setIsSubmitting(true);
+    // Payload sudah memiliki struktur yang benar dari form, tinggal tambahkan votingId
     const payload = {
+      ...data,
       votingId: votingId,
-      seasonTeamPLayerId: data.seasonTeamPlayerId,
-      performance: data.performance,
     };
 
     createCandidate.mutate(
       { body: payload },
       {
         onSuccess: () => {
-          form.reset();
+          // Reset form ke default values yang baru
+          form.reset({
+            seasonTeamPlayerId: "",
+            performance: { goal: 0, assist: 0, save: 0 },
+          });
           toast.success("Kandidat berhasil ditambahkan");
           setOpenModal(false);
           queryClient.invalidateQueries({
-            queryKey: ["/superadmin/candidates"],
+            queryKey: ["/superadmin/candidates", { votingId: votingId }],
           });
           setIsSubmitting(false);
         },
@@ -95,12 +116,10 @@ export default function ManageCandidatePage() {
               "Terjadi kesalahan saat menambahkan kandidat"
           );
 
-          // Handle validation errors
           if (error.status === 422) {
             const validationErrors = error.data.validation as Partial<
               Record<keyof FormData, string>
             >;
-
             Object.entries(validationErrors).forEach(([field, message]) => {
               if (message) {
                 form.setError(field as keyof FormData, {
@@ -114,6 +133,7 @@ export default function ManageCandidatePage() {
       }
     );
   };
+  // --- CHANGE END: Update onSubmit Logic ---
 
   const seasonTeamPlayer = useGetPlayingPlayers({
     sort: "createdAt",
@@ -123,13 +143,10 @@ export default function ManageCandidatePage() {
   const seasonTeamPlayers = seasonTeamPlayer.data?.data?.list || [];
 
   const { data: votingData, isFetching } = useGetVotingById(votingId);
-  const [openModal, setOpenModal] = useState(false);
-
   const { data: candidateData } = useGetCandidates({ votingId: votingId });
   const totalItems = candidateData?.data?.total || 0;
 
   if (!votingId) {
-    // Handle error
     return <div>ID voting tidak ditemukan.</div>;
   }
 
@@ -137,7 +154,8 @@ export default function ManageCandidatePage() {
     return (
       <SuperadminLayout>
         <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Memuat detail voting...</p>
+          <Loader2 className="animate-spin" />
+          <p className="text-gray-500 ml-2">Memuat detail voting...</p>
         </div>
       </SuperadminLayout>
     );
@@ -171,10 +189,8 @@ export default function ManageCandidatePage() {
               {formatDate(voting?.startDate)} - {formatDate(voting?.endDate)}
             </p>
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className="text-sm text-muted-foreground">
-              Kandidat dan Hasil Voting
-            </h1>
+          <div className="flex items-center justify-between pt-4">
+            <h1 className="text-lg font-semibold">Kandidat dan Hasil Voting</h1>
             <Button
               className="gap-2 text-white bg-blue-pfl"
               onClick={() => setOpenModal(true)}
@@ -197,36 +213,41 @@ export default function ManageCandidatePage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-2 flex flex-col justify-center items-center">
-              <CandidatesDataTable
-                candidates={candidateData?.data?.list || []}
-              />
-            </div>
+            <CandidatesDataTable
+              candidates={candidateData?.data?.list || []}
+            />
           )}
         </CardContent>
       </Card>
 
+      {/* --- CHANGE START: Update Modal Form --- */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent className="w-full max-w-md p-6">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="sr-only">Tambahkan Kandidat</DialogTitle>
+            <DialogTitle className="text-center">Tambah Kandidat Baru</DialogTitle>
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 w-full"
+            >
               <FormField
                 control={form.control}
                 name="seasonTeamPlayerId"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <RequiredLabel>Pilih Player</RequiredLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <RequiredLabel>Pilih Player/Pemain</RequiredLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Pilih Player" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="max-h-60 overflow-y-auto w-full">
+                      <SelectContent>
                         {seasonTeamPlayers.map((seasonTeamPlayer) => (
                           <SelectItem
                             key={seasonTeamPlayer.id}
@@ -242,20 +263,77 @@ export default function ManageCandidatePage() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="performance"
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredLabel> Performa </RequiredLabel>
-                    <FormControl>
-                      <Input placeholder="Masukkan Performa" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex justify-center mt-4">
+              <div className="space-y-4 pt-2">
+                <FormLabel>Performa</FormLabel>
+
+                <FormField
+                  control={form.control}
+                  name="performance.goal"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Gol :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Gol"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="performance.assist"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Assist :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Assist"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="performance.save"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Save :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Save"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-center pt-4">
                 <Button
                   type="submit"
                   className="bg-blue-pfl flex items-center justify-center hover:bg-blue-700 text-white"
@@ -265,16 +343,18 @@ export default function ManageCandidatePage() {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Tambahkan Kandidat
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
+      {/* --- CHANGE END: Update Modal Form --- */}
     </SuperadminLayout>
   );
 }
+
 function formatDate(dateString?: string): string {
   if (!dateString) return "-";
   const date = new Date(dateString);
