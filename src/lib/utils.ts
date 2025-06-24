@@ -38,19 +38,6 @@ export function formatDate(
   return new Intl.DateTimeFormat(locale, formatOptions).format(date);
 }
 
-export function formatDateToLocalISOString(date: Date): string {
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
-}
-
 export function formatRupiah(value: number) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",

@@ -25,7 +25,7 @@ import {
   useGetTickets,
 } from "../../../_services/ticket";
 import type { TicketResponseList } from "../../../_models/response/ticket";
-import { formatDateToLocalISOString, formatRupiah } from "@/lib/utils";
+import { formatRupiah } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -326,7 +326,7 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
       tickets: data.tickets.map((ticket) => ({
         id: ticket.apiId, // Use apiId for the API call
         name: ticket.name,
-        date: formatDateToLocalISOString(ticket.date),
+        date: ticket.date.toISOString(),
         price: ticket.price,
         quota: ticket.quota,
         matchs: ticket.matchs.map((match) => ({

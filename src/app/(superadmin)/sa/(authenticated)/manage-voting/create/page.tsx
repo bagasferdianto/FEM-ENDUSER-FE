@@ -34,7 +34,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useGetSeries } from "../../_services/series";
-import { formatDateToLocalISOString } from "@/lib/utils";
 import { useGetActiveSeason } from "../../_services/season";
 import { Season } from "../../_models/response/season";
 
@@ -101,8 +100,8 @@ export default function CreateVotingForm() {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("seriesId", data.seriesId);
-    formData.append("startDate", formatDateToLocalISOString(data.startDate));
-    formData.append("endDate", formatDateToLocalISOString(data.endDate));
+    formData.append("startDate", data.startDate.toISOString());
+    formData.append("endDate", data.endDate.toISOString());
     formData.append("status", data.status);
     formData.append("banner", data.banner);
 
