@@ -81,6 +81,9 @@ export default function CandidatesDataTable({
   const schema = z.object({
     seasonTeamPlayerId: z.string().nonempty("Player wajib dipilih"),
     performance: z.object({
+      teamLeaderboard: z.coerce
+        .number({ invalid_type_error: "Peringkat tim harus berupa angka" })
+        .min(0, "Peringkat tim tidak boleh negatif"),
       goal: z.coerce
         .number({ invalid_type_error: "Goal harus berupa angka" })
         .min(0, "Goal tidak boleh negatif"),
@@ -103,6 +106,7 @@ export default function CandidatesDataTable({
     defaultValues: {
       seasonTeamPlayerId: "",
       performance: {
+        teamLeaderboard: 0,
         goal: 0,
         assist: 0,
         save: 0,
@@ -121,6 +125,7 @@ export default function CandidatesDataTable({
   // --- CHANGE START: Update setUpdateForm function ---
   const setUpdateForm = (data: Candidate) => {
     form.setValue("seasonTeamPlayerId", data.seasonTeamPlayer.id);
+    form.setValue("performance.teamLeaderboard", data.performance.teamLeaderboard);
     form.setValue("performance.goal", data.performance.goal);
     form.setValue("performance.assist", data.performance.assist);
     form.setValue("performance.save", data.performance.save);
@@ -297,7 +302,10 @@ export default function CandidatesDataTable({
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <RequiredLabel>Pilih Player/Pemain</RequiredLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Pilih Player" />
@@ -319,71 +327,102 @@ export default function CandidatesDataTable({
                 )}
               />
 
-              <div className="space-y-2">
+              <div className="space-y-4 pt-2">
                 <FormLabel>Performa</FormLabel>
+
+                <FormField
+                  control={form.control}
+                  name="performance.teamLeaderboard"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Peringkat Team :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Peringkat Team pada Leaderboard"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(35%)]" />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="performance.goal"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-4">
-                      <FormLabel className="w-1/2">Jumlah Gol :</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Masukkan Jumlah Gol"
-                          {...field}
-                        />
-                      </FormControl>
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Gol :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Gol"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
-                <FormMessage className="pl-[calc(33.33%+1rem)]" />
-              </div>
 
-              <div className="space-y-2">
                 <FormField
                   control={form.control}
                   name="performance.assist"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-4">
-                      <FormLabel className="w-1/2">Jumlah Assist :</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Masukkan Jumlah Assist"
-                          {...field}
-                        />
-                      </FormControl>
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Assist :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Assist"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
-                <FormMessage className="pl-[calc(33.33%+1rem)]" />
-              </div>
 
-              <div className="space-y-2">
                 <FormField
                   control={form.control}
                   name="performance.save"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-4">
-                      <FormLabel className="w-1/2">Jumlah Save :</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Masukkan Jumlah Save"
-                          {...field}
-                        />
-                      </FormControl>
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Jumlah Save :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Masukkan Jumlah Save"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
-                <FormMessage className="pl-[calc(33.33%+1rem)]" />
               </div>
 
-              <DialogFooter>
+              <div className="flex justify-center pt-4">
                 <Button
-                  className="w-full bg-blue-pfl text-white hover:bg-blue-700" 
                   type="submit"
+                  className="bg-blue-pfl flex items-center justify-center hover:bg-blue-700 text-white"
                   disabled={isSubmitting}
                 >
                   {isSubmitting && (
@@ -391,7 +430,7 @@ export default function CandidatesDataTable({
                   )}
                   Perbarui Kandidat
                 </Button>
-              </DialogFooter>
+              </div>
             </form>
           </Form>
         </DialogContent>
