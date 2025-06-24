@@ -34,7 +34,6 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { useGetVotingById, useUpdateVoting } from "../../../_services/voting";
 import { StatusRequestEnum } from "../../../_models/response/voting";
 import { useGetSeries } from "../../../_services/series";
-import { formatDateToLocalISOString } from "@/lib/utils";
 import { mapStatusStringToEnumValue } from "../../../_utils/voting";
 import { useGetActiveSeason } from "../../../_services/season";
 import { Season } from "../../../_models/response/season";
@@ -130,8 +129,8 @@ export default function EditVotingForm({ params }: EditVotingPageProps) {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("seriesId", data.seriesId);
-    formData.append("startDate", formatDateToLocalISOString(data.startDate));
-    formData.append("endDate", formatDateToLocalISOString(data.endDate));
+    formData.append("startDate", data.startDate.toISOString());
+    formData.append("endDate", data.endDate.toISOString());
     formData.append("status", data.status);
     if (data.banner instanceof File) {
       formData.append("banner", data.banner);
