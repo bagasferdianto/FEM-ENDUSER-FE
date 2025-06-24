@@ -29,7 +29,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGetVenues } from "../../_services/venue";
 import { useCreateSeries } from "../../_services/series";
-import { formatDateToLocalISOString } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
 
 const schema = z.object({
@@ -73,8 +72,8 @@ export default function CreateSeriesForm() {
       name: data.name,
       venueId: data.venueId,
       price: data.price,
-      startDate: formatDateToLocalISOString(data.startDate),
-      endDate: formatDateToLocalISOString(data.endDate),
+      startDate: data.startDate.toISOString(),
+      endDate: data.endDate.toISOString(),
     };
 
     createSeries.mutate(

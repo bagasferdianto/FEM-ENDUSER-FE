@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatDateToLocalISOString } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useGetVenues } from "../../../_services/venue";
 import { useGetSeriesById, useUpdateSeries } from "../../../_services/series";
@@ -111,8 +110,8 @@ export default function EditSeriesForm({ params }: EditSeriesPageProps) {
       name: data.name,
       venueId: data.venueId,
       price: data.price,
-      startDate: formatDateToLocalISOString(data.startDate),
-      endDate: formatDateToLocalISOString(data.endDate),
+      startDate: data.startDate.toISOString(),
+      endDate: data.endDate.toISOString(),
     };
 
     updateSeries.mutate(
