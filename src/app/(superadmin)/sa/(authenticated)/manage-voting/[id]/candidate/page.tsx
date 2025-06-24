@@ -54,6 +54,9 @@ export default function ManageCandidatePage() {
   const schema = z.object({
     seasonTeamPlayerId: z.string().nonempty("Pemain wajib diisi"),
     performance: z.object({
+      teamLeaderboard: z.coerce
+        .number({ invalid_type_error: "Peringkat tim harus berupa angka" })
+        .min(0, "Peringkat tim tidak boleh negatif"),
       goal: z.coerce
         .number({ invalid_type_error: "Goal harus berupa angka" })
         .min(0, "Goal tidak boleh negatif"),
@@ -73,6 +76,7 @@ export default function ManageCandidatePage() {
     defaultValues: {
       seasonTeamPlayerId: "",
       performance: {
+        teamLeaderboard: 0,
         goal: 0,
         assist: 0,
         save: 0,
@@ -193,7 +197,10 @@ export default function ManageCandidatePage() {
             <h1 className="text-lg font-semibold">Kandidat dan Hasil Voting</h1>
             <Button
               className="gap-2 text-white bg-blue-pfl"
-              onClick={() => setOpenModal(true)}
+              onClick={() => {
+                form.reset();
+                setOpenModal(true);
+              }}
             >
               Tambah Kandidat
               <Plus className="h-4 w-4" />
@@ -213,9 +220,7 @@ export default function ManageCandidatePage() {
               </CardContent>
             </Card>
           ) : (
-            <CandidatesDataTable
-              candidates={candidateData?.data?.list || []}
-            />
+            <CandidatesDataTable candidates={candidateData?.data?.list || []} />
           )}
         </CardContent>
       </Card>
@@ -224,7 +229,9 @@ export default function ManageCandidatePage() {
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-center">Tambah Kandidat Baru</DialogTitle>
+            <DialogTitle className="text-center">
+              Tambah Kandidat Baru
+            </DialogTitle>
           </DialogHeader>
 
           <Form {...form}>
@@ -268,6 +275,28 @@ export default function ManageCandidatePage() {
 
                 <FormField
                   control={form.control}
+                  name="performance.teamLeaderboard"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-4">
+                        <FormLabel className="w-1/2 text-sm font-normal">
+                          Peringkat Team :
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Peringkat Team pada Leaderboard"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="pl-[calc(35%)]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="performance.goal"
                   render={({ field }) => (
                     <FormItem>
@@ -283,7 +312,7 @@ export default function ManageCandidatePage() {
                           />
                         </FormControl>
                       </div>
-                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
@@ -305,7 +334,7 @@ export default function ManageCandidatePage() {
                           />
                         </FormControl>
                       </div>
-                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
@@ -327,7 +356,7 @@ export default function ManageCandidatePage() {
                           />
                         </FormControl>
                       </div>
-                      <FormMessage className="pl-[calc(50%+1rem)]" />
+                      <FormMessage className="pl-[calc(35%)]" />
                     </FormItem>
                   )}
                 />
@@ -343,7 +372,6 @@ export default function ManageCandidatePage() {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Tambahkan Kandidat
-                  <Plus className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </form>

@@ -40,6 +40,7 @@ export interface Voters {
 }
 
 export interface Performance {
+  teamLeaderboard: number;
   goal: number;
   assist: number;
   save: number;
