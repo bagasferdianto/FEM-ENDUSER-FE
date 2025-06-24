@@ -28,6 +28,7 @@ export interface Voting {
     banner: Banner;
     startDate: string;
     endDate: string;
+    performancePoint: PerformancePoint;
     totalVoter: number;
     createdAt: string;
     updatedAt: string;
@@ -36,6 +37,12 @@ export interface Voting {
 export interface Series {
     id: string;
     name: string;
+}
+
+interface PerformancePoint {
+    goal: number;
+    assist: number;
+    save: number;
 }
 
 export interface Banner {

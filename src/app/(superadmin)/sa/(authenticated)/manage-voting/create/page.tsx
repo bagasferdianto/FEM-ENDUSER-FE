@@ -42,6 +42,15 @@ const formSchema = z.object({
   seriesId: z.string().nonempty("Seri wajib dipilih"),
   startDate: z.date({ required_error: "Tanggal mulai wajib diisi" }),
   endDate: z.date({ required_error: "Tanggal selesai wajib diisi" }),
+  goalPoint: z.coerce
+    .number({ invalid_type_error: "Poin goal harus berupa angka" })
+    .min(0, "Poin goal tidak boleh negatif"),
+  assistPoint: z.coerce
+    .number({ invalid_type_error: "Poin assist harus berupa angka" })
+    .min(0, "Poin assist tidak boleh negatif"),
+  savePoint: z.coerce
+    .number({ invalid_type_error: "Poin save harus berupa angka" })
+    .min(0, "Poin save tidak boleh negatif"),
   banner: z.instanceof(File, { message: "Banner voting wajib dipilih" }),
   status: z.string().refine((val) => ["1", "2", "3"].includes(val), {
     message: "Status tidak valid",
@@ -60,6 +69,9 @@ export default function CreateVotingForm() {
       seriesId: "",
       startDate: undefined,
       endDate: undefined,
+      goalPoint: 4,
+      assistPoint: 2,
+      savePoint: 5,
       banner: undefined,
       status: StatusRequestEnum.NonActive.toString(),
     },
@@ -102,6 +114,9 @@ export default function CreateVotingForm() {
     formData.append("seriesId", data.seriesId);
     formData.append("startDate", data.startDate.toISOString());
     formData.append("endDate", data.endDate.toISOString());
+    formData.append("goalPoint", data.goalPoint.toString());
+    formData.append("assistPoint", data.assistPoint.toString());
+    formData.append("savePoint", data.savePoint.toString());
     formData.append("status", data.status);
     formData.append("banner", data.banner);
 
@@ -274,6 +289,72 @@ export default function CreateVotingForm() {
               <p className="text-sm font-medium text-black">
                 *note : rekomendasi ukuran gambar 1440 px X 480 px
               </p>
+
+              <div className="space-y-2">
+                <p className="text-md font-medium text-black">
+                  Tentukan Skor Peforma
+                </p>
+                <FormField
+                  control={form.control}
+                  name="goalPoint"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-x-2">
+                        <RequiredLabel className="w-1/6"> Goal :</RequiredLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Poin Goal"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="assistPoint"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-x-2">
+                        <RequiredLabel className="w-1/6">
+                          {" "}
+                          Assist :
+                        </RequiredLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Poin Assist"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="savePoint"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-x-2">
+                        <RequiredLabel className="w-1/6"> Save :</RequiredLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Poin Save"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
