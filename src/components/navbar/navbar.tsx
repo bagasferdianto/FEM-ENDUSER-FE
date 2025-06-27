@@ -28,7 +28,7 @@ export default function Navbar() {
     };
 
     return (
-        <header className="absolute top-0 left-0 right-0 z-50 px-16 py-4">
+        <header className="relative top-0 left-0 right-0 z-50 px-16 py-4 bg-gradient-to-r from-[#00009C] to-[#000036] shadow-lg">
             <div className="w-full flex items-center justify-between">
                 <div className="hidden md:flex items-center text-white h-12 w-32 relative">
                     <Image
