@@ -58,7 +58,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
           size="sm"
           onClick={() => typeof page === "number" && onPageChange(page)}
           disabled={typeof page !== "number"}
-          className={page === currentPage ? "bg-white border-2 hover:bg-blue-pfl" : ""}
+          className={page === currentPage ? "border-2 bg-slate-300" : ""}
         >
           {page}
         </Button>
