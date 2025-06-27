@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { HttpProvider, QueryClient } from "react-ohttp";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -12,6 +12,15 @@ const queryClient = new QueryClient();
 export function Providers({ children }: { children: React.ReactNode }) {
   const [show401, setShow401] = useState(false);
   const hasShown401Toast = useRef(false);
+
+  const [color, setColor] = useState("#FFFFFF");
+
+  useEffect(() => {
+    if (window.location.pathname.includes("sa")) {
+      setColor("#00009C");
+    }
+  }, []);
+  
   return (
     <HttpProvider
       client={queryClient}
@@ -43,7 +52,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <ProgressProvider
         height="4px"
-        color="#00009C"
+        color={color}
         options={{ showSpinner: false }}
         shallowRouting
       >
