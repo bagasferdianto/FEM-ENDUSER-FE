@@ -7,6 +7,7 @@ import { useGetSeriesWithTickets } from "@/app/_services/series";
 import EmptyCard from "../ui/empty-card";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 import DefaultTeamLogo from "@/app/assets/images/default-team.svg"
 import { useSeason } from "@/contexts/season-context";
 
@@ -47,6 +48,7 @@ const Matches: React.FC = () => {
         return `${day}-${month}-${year}`;
     };
 
+    const router = useRouter();
 
     return (
         <section className="p-16 bg-white">
@@ -90,7 +92,7 @@ const Matches: React.FC = () => {
                                                         <span className="text-white font-semibold">Ticket For 1 Day</span>
                                                         <div className="flex justify-between items-center">
                                                             <span className="font-semibold px-4">{formatRupiah(ticket.price)}</span>
-                                                            <Button size="sm" className="bg-blue-pfl hover:bg-blue-800">Beli Tiket</Button>
+                                                            <Button onClick={() => router.push('/purchase')} size="sm" className="bg-blue-pfl hover:bg-blue-800">Beli Tiket</Button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -154,7 +156,7 @@ const Matches: React.FC = () => {
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <span className="font-semibold"> {formatRupiah(series.price)} </span>
-                                    <Button className="bg-blue-pfl hover:bg-blue-900">Beli Tiket Bundling</Button>
+                                    <Button onClick={() => router.push('/purchase')} className="bg-blue-pfl hover:bg-blue-900">Beli Tiket Bundling</Button>
                                 </div>
                             </div>
 
