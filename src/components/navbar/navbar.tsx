@@ -13,8 +13,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Season } from "@/app/_models/response/season";
 
-export default function Navbar() {
+interface NavbarProps {
+  activeSeason: Season | null;
+}
+
+export default function Navbar({ activeSeason }: NavbarProps) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
@@ -32,7 +37,7 @@ export default function Navbar() {
             <div className="w-full flex items-center justify-between">
                 <div className="hidden md:flex items-center text-white h-12 w-32 relative">
                     <Image
-                        src="/images/PFL-Logo-Putih.png"
+                        src={activeSeason?.logo.url || "/images/PFL-Logo-Putih.png"}
                         alt="PFL Logo"
                         fill
                         className="object-contain"

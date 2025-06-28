@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react"
-import { useGetActiveSeason } from "@/app/_services/season";
 import { useEffect, useState } from "react";
 import { Season } from "@/app/_models/response/season";
 import { useGetSeriesWithTickets } from "@/app/_services/series";
@@ -11,9 +10,11 @@ import { formatDate, formatRupiah } from "@/lib/utils";
 import Image from "next/image";
 import DefaultTeamLogo from "@/app/assets/images/default-team.svg"
 
-const Matches: React.FC = () => {
-    const { data: season, isFetching } = useGetActiveSeason();
-    const [activeSeason, setActiveSeason] = useState<Season | null>(null);
+interface MatchesProps {
+  activeSeason: Season | null;
+}
+
+const Matches: React.FC<MatchesProps> = ({ activeSeason }) => {
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
@@ -24,16 +25,6 @@ const Matches: React.FC = () => {
         limit: "1",
         seasonId: activeSeason?.id || "none",
     });
-
-    useEffect(() => {
-        if (!isFetching) {
-            if (season?.status === 400) {
-                setActiveSeason(null);
-            } else {
-                setActiveSeason(season?.data || null);
-            }
-        }
-    }, [season, isFetching]);
 
     useEffect(() => {
         if (series?.data?.total && series.data.limit) {
