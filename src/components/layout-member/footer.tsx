@@ -3,8 +3,11 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Phone, Mail, Facebook, Instagram, Youtube } from "lucide-react"
+import { useSeason } from "@/contexts/season-context";
 
 const Footer: React.FC = () => {
+    const activeSeason = useSeason();
+
     return (
         <footer className="bg-[#1a1a2e] text-white p-16">
             <div className="container">
@@ -12,7 +15,7 @@ const Footer: React.FC = () => {
                     <div className="md:col-span-2 space-y-6">
                         <div className="w-32 h-10 flex items-center justify-center relative">
                             <Image
-                                src="/images/PFL-Logo-Putih.png"
+                                src={ activeSeason?.logo.url || "/images/PFL-Logo-Putih.png"}
                                 alt="PFL Logo"
                                 fill
                                 className="object-contain"

@@ -3,8 +3,7 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import VoteConfirmationModal from '@/components/ui/vote-confirmation';
-import Navbar from "@/components/navbar/navbar";
-import Footer from "@/components/footer/footer";
+import MemberLayout from '@/components/layout-member';
 
 const players = [
     {
@@ -53,9 +52,7 @@ const VotingPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
-        <>
-            <Navbar />
-
+        <MemberLayout withFooter>
             <div className="bg-white min-h-screen px-4 sm:px-8 md:px-16 py-10">
                 {/* Header */}
                 <div className="flex items-center gap-2 mb-6 bg-gradient-to-r from-[#0E5889] to-[#0078FF] p-4 rounded-lg shadow-md">
@@ -137,9 +134,7 @@ const VotingPage = () => {
                     </p>
                 </div>
             </div>
-
-            <Footer />
-        </>
+        </MemberLayout>
     );
 };
 
