@@ -41,6 +41,21 @@ export default function Register() {
           type: "server",
           message: error?.data?.message || "Terjadi kesalahan",
         });
+
+        if (error.status === 422) {
+          const validationErrors = error.data.validation as Partial<
+            Record<keyof FormData, string>
+          >;
+
+          Object.entries(validationErrors).forEach(([field, message]) => {
+            if (message) {
+              form.setError(field as keyof z.infer<typeof schema>, {
+                type: "manual",
+                message,
+              });
+            }
+          });
+        }
       },
       onSuccess: () => {
         toast.success("Registrasi berhasil, silakan login");
