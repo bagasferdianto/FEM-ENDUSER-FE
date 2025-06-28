@@ -1,14 +1,16 @@
 "use client"
 
+import { useSeason } from "@/contexts/season-context";
 import Image from "next/image"
 // import Navbar from "@/components/navbar/navbar";
 
 const Hero: React.FC = () => {
+    const activeSeason = useSeason();
     return (
         <section className="relative w-full h-[76vh]">
             <div >
                 <Image
-                    src="/images/Header.svg?height=682&width=1440"
+                    src={ activeSeason?.banner.url || "/images/Header.svg?height=682&width=1440"}
                     alt="Stadium Background"
                     fill
                     className="object-cover"

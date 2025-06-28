@@ -1,19 +1,16 @@
 'use client';
 
+import MemberLayout from '@/components/layout-member';
 import Image from 'next/image';
-import Navbar from "@/components/navbar/navbar";
-import Footer from "@/components/footer/footer";
 
 const VerificationPage = () => {
-    const isVerificationSuccess = true;
+    const isVerificationSuccess = false;
 
     return (
-        <>
-            <Navbar />
-
-            <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center w-screen">
+        <MemberLayout>
+            <div className="flex flex-col items-center justify-center min-h-full px-4 text-center w-full">
                 {isVerificationSuccess ? (
-                    <div className="flex flex-col items-center space-y-4 w-full max-w-md">
+                    <div className="flex flex-col min-h-[calc(100vh-90px)] justify-center items-center space-y-4 w-full max-w-md">
                         <Image src="/images/circle-check.svg" alt="Success" width={140} height={140} />
                         <h1 className="text-2xl font-bold">Verifikasi Berhasil!</h1>
                         <p className="text-base md:text-lg text-center">
@@ -24,7 +21,7 @@ const VerificationPage = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center space-y-4 w-full max-w-md">
+                    <div className="flex flex-col min-h-[calc(100vh-90px)] justify-center items-center space-y-4 w-full max-w-md">
                         <Image src="/images/circle-x.svg" alt="Failed" width={140} height={140} />
                         <h1 className="text-2xl font-bold">Verifikasi Gagal!</h1>
                         <p className="text-base md:text-lg text-center">
@@ -36,9 +33,7 @@ const VerificationPage = () => {
                     </div>
                 )}
             </div>
-
-            <Footer />
-        </>
+        </ MemberLayout>
     );
 };
 
