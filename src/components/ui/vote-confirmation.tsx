@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Dialog, DialogClose, DialogContent,  DialogOverlay,  DialogPortal,  DialogTitle } from "./dialog";
+import { Button } from "./button";
 
 type Props = {
   open: boolean;
@@ -63,21 +64,21 @@ const VoteConfirmationDialog: React.FC<Props> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex justify-between gap-4 mb-4">
-              <DialogClose asChild>
-                <button className="w-1/2 bg-blue-pfl text-white py-2 rounded-md hover:bg-blue-900">
+            <div className="flex flex-row justify-between gap-4 mb-4 w-full">
+              <DialogClose asChild className="flex-1">
+                <Button className="bg-gray-100 text-blue-pfl border border-blue-pfl py-2 rounded-md hover:bg-gray-300">
                   Batal
-                </button>
+                </Button>
               </DialogClose>
-              <button
+              <Button
                 onClick={() => {
                   onConfirm();
                   onOpenChange(false);
                 }}
-                className="w-1/2 bg-blue-800 text-white py-2 rounded-md hover:bg-blue-900"
+                className="flex-1 bg-blue-pfl text-white py-2 rounded-md hover:bg-blue-800"
               >
                 Ya, Vote
-              </button>
+              </Button>
             </div>
 
             {/* Info */}

@@ -7,7 +7,7 @@ import Image from "next/image"
 const Hero: React.FC = () => {
     const activeSeason = useSeason();
     return (
-        <section className="relative w-full h-[76vh]">
+        <section className="relative w-full h-screen">
             <div >
                 <Image
                     src={ activeSeason?.banner.url || "/images/Header.svg?height=682&width=1440"}

@@ -1,3 +1,5 @@
+"use client";
+
 import { useGetActiveSeason } from "@/app/_services/season";
 import Footer from "./footer";
 import Navbar from "./navbar";
