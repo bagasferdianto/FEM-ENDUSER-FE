@@ -97,10 +97,10 @@ const VerificationPage = ({ params, searchParams }: VerificationPageProps) => {
   }
 
   return (
-    <MemberLayout>
+    <MemberLayout withFooter>
       <div className="flex flex-col items-center justify-center min-h-full px-4 text-center w-full">
         {isVerificationSuccess ? (
-          <div className="flex flex-col min-h-[calc(100vh-90px)] justify-center items-center space-y-4 w-full max-w-md">
+          <div className="flex flex-col h-screen justify-center items-center space-y-4 w-full max-w-md">
             <Image
               src="/images/circle-check.svg"
               alt="Success"
@@ -120,7 +120,7 @@ const VerificationPage = ({ params, searchParams }: VerificationPageProps) => {
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col min-h-[calc(100vh-90px)] justify-center items-center space-y-4 w-full max-w-md">
+          <div className="flex flex-col h-screen justify-center items-center space-y-4 w-full max-w-md">
             <Image
               src="/images/circle-x.svg"
               alt="Failed"

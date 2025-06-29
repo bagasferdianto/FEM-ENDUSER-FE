@@ -30,7 +30,7 @@ export default function Navbar() {
     };
 
     return (
-        <header className="relative top-0 left-0 right-0 z-50 px-16 py-4 bg-gradient-to-r from-[#00009C] to-[#000036] shadow-lg">
+        <header className="absolute top-0 left-0 right-0 z-50 px-16 py-2 bg-gradient-to-r from-[#00009C] to-[#000036] shadow-lg">
             <div className="w-full flex items-center justify-between">
                 <div className="hidden md:flex items-center text-white h-12 w-32 relative">
                     <Image
@@ -41,7 +41,7 @@ export default function Navbar() {
                     />
                 </div>
 
-                <nav className="hidden md:flex items-center space-x-8 text-white">
+                <nav className="hidden md:flex items-center space-x-8 text-sm text-white">
                     <Link href="/" className="hover:text-blue-400 transition-colors">
                         Home
                     </Link>
@@ -55,7 +55,7 @@ export default function Navbar() {
                     {!isLoggedIn ? (
                         <Link
                             href="/login"
-                            className="bg-blue-800 px-4 py-2 rounded-md hover:bg-blue-900 text-white transition-colors"
+                            className="bg-blue-pfl px-4 py-2 rounded-md hover:bg-blue-800 text-white transition-colors"
                         >
                             Masuk
                         </Link>

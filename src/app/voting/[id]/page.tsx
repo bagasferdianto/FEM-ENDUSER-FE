@@ -4,6 +4,8 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import VoteConfirmationModal from '@/components/ui/vote-confirmation';
 import MemberLayout from '@/components/layout-member';
+import { Button } from '@/components/ui/button';
+import Header from '@/components/header-page/header-page';
 
 const players = [
     {
@@ -53,13 +55,11 @@ const VotingPage = () => {
 
     return (
         <MemberLayout withFooter>
-            <div className="bg-white min-h-screen px-4 sm:px-8 md:px-16 py-10">
-                {/* Header */}
-                <div className="flex items-center gap-2 mb-6 bg-gradient-to-r from-[#0E5889] to-[#0078FF] p-4 rounded-lg shadow-md">
-                    <span className="text-white text-2xl font-semibold">← PFL Vote</span>
-                </div>
+            <div className="flex flex-col gap-4 bg-white min-h-screen px-4 sm:px-8 md:px-16 py-28">
+                
+                <Header title="PFL Vote" />
 
-                <h1 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-blue-pfl mb-2">
                     Vote Now! Player of The Series - Series 1
                 </h1>
                 <p className="text-gray-700 mb-6">
@@ -67,9 +67,9 @@ const VotingPage = () => {
                 </p>
 
                 {/* Countdown */}
-                <div className="text-lg font-semibold text-blue-900 mb-8">
+                <div className="text-lg font-semibold text-blue-pfl mb-8">
                     Voting akan berakhir dalam :{' '}
-                    <span className="bg-blue-700 text-white px-4 py-2 rounded-lg ml-2">
+                    <span className="bg-blue-pfl text-white px-4 py-2 rounded-lg ml-2">
                         3 Hari : 12 Jam : 27 Menit
                     </span>
                 </div>
@@ -92,12 +92,12 @@ const VotingPage = () => {
                             </div>
                             <div className="font-bold text-lg text-gray-900 mb-1">{player.name}</div>
                             <div className="text-sm text-gray-600 mb-2">{player.role}</div>
-                            <button onClick={() => setIsModalOpen(true)} className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition mb-3">
+                            <Button onClick={() => setIsModalOpen(true)} className="bg-blue-pfl text-white px-4 py-2 rounded hover:bg-blue-800 transition mb-3">
                                 Vote Now
-                            </button>
+                            </Button>
                             <VoteConfirmationModal
                                 open={isModalOpen}
-                                onOpenChange ={() => setIsModalOpen(false)}
+                                onOpenChange={() => setIsModalOpen(false)}
                                 onConfirm={() => {
                                     setIsModalOpen(false);
                                     alert('Vote berhasil!');
@@ -111,8 +111,11 @@ const VotingPage = () => {
                                 <br />
                                 Total Vote Sementara : {player.votes} Voters
                             </p>
-                            <div className="bg-blue-700 text-white mt-3 py-1 rounded-lg font-semibold">
-                                Perolehan Suara : {player.percentage} %
+                            <div className='flex flex-row text-sm text-gray-700 items-center w-full gap-2'>
+                                Perolehan Suara :
+                                <div className="bg-blue-pfl text-white mt-3 py-1 rounded font-medium flex-1">
+                                    {player.percentage} %
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -120,7 +123,7 @@ const VotingPage = () => {
 
                 {/* Langkah-langkah */}
                 <div>
-                    <h2 className="text-lg font-bold text-blue-800 mb-2">
+                    <h2 className="text-lg font-bold text-blue-pfl mb-2">
                         Langkah-langkah Voting
                     </h2>
                     <ul className="list-disc pl-5 text-gray-700 space-y-2 mb-2">
