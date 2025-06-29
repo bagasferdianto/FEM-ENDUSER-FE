@@ -92,7 +92,7 @@ const Matches: React.FC = () => {
                                                         <span className="text-white font-semibold">Ticket For 1 Day</span>
                                                         <div className="flex justify-between items-center">
                                                             <span className="font-semibold px-4">{formatRupiah(ticket.price)}</span>
-                                                            <Button onClick={() => router.push('/purchase')} size="sm" className="bg-blue-pfl hover:bg-blue-800">Beli Tiket</Button>
+                                                            <Button onClick={() => router.push(`/purchase/day/${ticket.id}`)} size="sm" className="bg-blue-pfl hover:bg-blue-800">Beli Tiket</Button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -156,7 +156,7 @@ const Matches: React.FC = () => {
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <span className="font-semibold"> {formatRupiah(series.price)} </span>
-                                    <Button onClick={() => router.push('/purchase')} className="bg-blue-pfl hover:bg-blue-900">Beli Tiket Bundling</Button>
+                                    <Button onClick={() => router.push(`/purchase/series/${series.id}`)} className="bg-blue-pfl hover:bg-blue-900">Beli Tiket Bundling</Button>
                                 </div>
                             </div>
 
