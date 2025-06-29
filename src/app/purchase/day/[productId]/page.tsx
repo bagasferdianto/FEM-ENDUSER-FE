@@ -1,16 +1,40 @@
 "use client"
 
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import MemberLayout from '@/components/layout-member';
 import Transaction from '@/app/purchase/_components/transaction';
 import Payment from '@/app/purchase/_components/payment';
 import Invoice from '@/app/purchase/_components/invoice';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { useGetTicketById } from '@/app/_services/ticket';
+import LoadingCard from '@/components/ui/loading';
+import { PurchaseResponse } from '@/app/_models/response/purchase';
 
-const PurchasePage = () => {
+interface PurchasePageProps {
+  params: Promise<{
+    productId: string;
+  }>;
+}
+
+const PurchasePage = ({ params } : PurchasePageProps) => {
+    const { productId } = use(params);
+    const searchParams = useSearchParams()
+    const purchaseIdParam = searchParams.get("purchaseId");
+    const { data: ticket, isFetching } = useGetTicketById(productId);
+
     const [step, setStep] = useState<'data' | 'confirm' | 'success'>('data');
+    const [purchaseId, setPurchaseId] = useState<string | null>(null);
+    const [purchase, setPurchase] = useState<PurchaseResponse | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        if(purchaseIdParam) {
+            setPurchaseId(purchaseIdParam);
+            setStep("confirm")
+        }
+    }, [purchaseIdParam]);
+
     const stepIcons = [
         '/icons/book.svg',
         '/icons/check-circle-2.svg',
@@ -31,26 +55,36 @@ const PurchasePage = () => {
         },
     ];
 
-    // const handleToXendit = async () => {
-    //     try {
-    //         const res = await fetch('/api/create-xendit-invoice', {
-    //             method: 'POST',
-    //             body: JSON.stringify({ /* data transaksi */ }),
-    //         });
+    const handleTransactionSuccess = (purchaseId: string) => {
+        setPurchaseId(purchaseId)
+        updateURL(purchaseId)
+        setStep("confirm")
+    }
 
-    //         const result = await res.json();
-    //         const { xendit_url } = result;
+    const handlePaymentSuccess = (purchase: PurchaseResponse) => {
+        setPurchase(purchase)
+        updateURL(purchase.data?.id)
+        setStep("success")
+    }
 
-    //         if (xendit_url) {
-    //             window.location.href = xendit_url; // Redirect langsung ke Xendit
-    //         } else {
-    //             alert('Gagal mendapatkan link pembayaran.');
-    //         }
-    //     } catch (error) {
-    //         console.error('Redirect error:', error);
-    //         alert('Terjadi kesalahan saat memproses pembayaran.');
-    //     }
-    // };
+    const updateURL = (purchaseId?: string) => {
+        const params = new URLSearchParams()
+        if (purchaseId) {
+            params.set("purchaseId", purchaseId)
+        }
+
+        // Only add search params if we're not on the initial transaction step
+        const newURL =
+        !purchaseId ? `/purchase/day/${productId}` : `/purchase/day/${productId}?${params.toString()}`
+
+        router.replace(newURL)
+    }
+
+    if (isFetching) {
+        <MemberLayout withFooter>
+            <LoadingCard loadingMessage='Memuat data tiket' />
+        </MemberLayout>
+    }
 
     return (
         <MemberLayout withFooter>
@@ -108,10 +142,9 @@ const PurchasePage = () => {
                     })}
                 </div>
 
-                {step === 'data' && <Transaction onNext={() => setStep('confirm')} />}
-                {step === 'confirm' && <Payment onNext={() => setStep('success')} />}
-                {/* {step === 'confirm' && <Payment onNext={handleToXendit} />} */}
-                {step === 'success' && <Invoice onDone={() => router.push('/')} />}
+                {step === 'data' && <Transaction onNext={handleTransactionSuccess} isPackage={false} ticket={ticket?.data} />}
+                {step === 'confirm' && <Payment onNext={handlePaymentSuccess} purchaseId={purchaseId ?? ""} />}
+                {step === 'success' && <Invoice onDone={() => router.push('/')} purchase={purchase} />}
             </div>
         </MemberLayout>
     )
