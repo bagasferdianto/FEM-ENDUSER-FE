@@ -34,7 +34,10 @@ import { DatePicker } from "@/components/ui/date-picker";
 const schema = z.object({
   name: z.string().nonempty("Nama series wajib diisi"),
   venueId: z.string().nonempty("Venue/tempat wajib dipilih"),
-  price: z.number().min(1, "Harga wajib diisi"),
+  price: z.coerce
+    .number({ invalid_type_error: "Harga harus berupa angka" })
+    .min(0, "Harga tidak boleh negatif")
+    .min(1, "Harga tidak boleh kosong"),
   startDate: z.date({ required_error: "Tanggal mulai wajib diisi" }),
   endDate: z.date({ required_error: "Tanggal selesai wajib diisi" }),
 });
@@ -178,8 +181,7 @@ export default function CreateSeriesForm() {
                       <Input
                         placeholder="Masukkan harga series disini"
                         type="number"
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        value={field.value}
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />

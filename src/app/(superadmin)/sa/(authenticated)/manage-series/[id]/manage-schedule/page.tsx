@@ -64,8 +64,14 @@ const ticketSchema = z.object({
   apiId: z.string().optional(),
   name: z.string().nonempty("Nama tiket wajib diisi"),
   date: z.date({ required_error: "Tanggal mulai wajib diisi" }),
-  price: z.number().min(1, "Harga wajib diisi"),
-  quota: z.number().min(1, "Kuota tiket wajib diisi"),
+  price: z.coerce
+    .number({ invalid_type_error: "Harga harus berupa angka" })
+    .min(0, "Harga tidak boleh negatif")
+    .min(1, "Harga tidak boleh kosong"),
+  quota: z.coerce
+      .number({ invalid_type_error: "Kuota tiket harus berupa angka" })
+      .min(0, "Kuota tiket tidak boleh negatif")
+      .min(1, "Kuota tiket tidak boleh kosong"),
   matchs: z.array(matchSchema).min(1, "Setidaknya ada satu pertandingan"),
 });
 
@@ -491,11 +497,6 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
                                   type="number"
                                   placeholder="Harga Tiket"
                                   {...field}
-                                  onChange={(e) =>
-                                    field.onChange(
-                                      Number(e.target.value) || undefined
-                                    )
-                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -538,11 +539,6 @@ export default function ManageSchedule({ params }: ManageSchedulePageProps) {
                                   type="number"
                                   placeholder="Jumlah Kuota"
                                   {...field}
-                                  onChange={(e) =>
-                                    field.onChange(
-                                      Number(e.target.value) || undefined
-                                    )
-                                  }
                                 />
                               </FormControl>
                               <FormMessage />
