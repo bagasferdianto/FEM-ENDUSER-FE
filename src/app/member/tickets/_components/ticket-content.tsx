@@ -11,7 +11,7 @@ const TicketContent = () => {
     const currentTab = searchParams.get('tab') || 'ticket';
 
     return (
-        <div className="flex flex-col gap-4 bg-white h-screen px-4 sm:px-8 md:px-16 pt-28 pb-14">
+        <div className="flex flex-col gap-4 bg-white min-h-screen h-fit px-4 sm:px-8 md:px-16 pt-28 pb-14">
             <Header title="E-Tiket" />
             <NavigationTabs />
             {currentTab === 'ticket' && <Tickets />}

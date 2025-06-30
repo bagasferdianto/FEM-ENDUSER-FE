@@ -1,5 +1,19 @@
 import { Ticket } from "./ticket";
 
+export interface PurchaseResponseList {
+  status: number;
+  message: string;
+  validation: Record<string, string> | null;
+  data: Data;
+}
+
+export interface Data {
+  limit: number;
+  page: number;
+  total: number;
+  list: Purchase[] | null;
+}
+
 export interface PurchaseResponse {
   status: number;
   message: string;
