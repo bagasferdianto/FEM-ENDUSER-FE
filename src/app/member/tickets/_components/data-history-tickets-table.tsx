@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import TicketModal from "@/components/ui/qr-ticket";
 import {
   Table,
   TableBody,
@@ -10,8 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useState } from "react";
 
 const Tickets = () => {
+  const [showModal, setShowModal] = useState(false);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 h-full">
       <div className="flex justify-center items-start bg-white border rounded-lg shadow p-4">
@@ -35,9 +38,16 @@ const Tickets = () => {
           <TableBody>
             <TableRow>
               <TableCell className="truncate max-w-xs font-medium text-left w-1/4">
-                <Button className="w-fit bg-blue-pfl text-white font-medium">
+                <Button className="w-fit bg-blue-pfl text-white font-medium" onClick={() => setShowModal(true)}>
                   Lihat Detail
                 </Button>
+                <TicketModal
+                  open={showModal}
+                  onClose={() => setShowModal(false)}
+                  qrValue="https://example.com/tiket/1234"
+                  ticketDate="30 Juni 2025"
+                  used={false}
+                />
               </TableCell>
               <TableCell className="truncate max-w-xs font-medium text-left w-1/4">
                 1 April 2025
@@ -48,7 +58,7 @@ const Tickets = () => {
               <TableCell className="truncate max-w-xs font-medium">
                 <Badge
                   className=
-                    "bg-gray-500 hover:bg-gray-600 rounded-full text-white"
+                  "bg-gray-500 hover:bg-gray-600 rounded-full text-white"
                 >
                   Terbayar
                 </Badge>
