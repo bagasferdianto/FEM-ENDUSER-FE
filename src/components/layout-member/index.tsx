@@ -31,7 +31,7 @@ export default function MemberLayout({
     <SeasonContext.Provider value={activeSeason}>
       <div className="min-h-screen">
         <Navbar />
-        <div className="p-8">
+        <div>
         {children}
         </div>  
         {withFooter && <Footer />}
