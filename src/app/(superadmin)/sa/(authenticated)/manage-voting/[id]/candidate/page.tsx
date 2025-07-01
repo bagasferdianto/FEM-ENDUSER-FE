@@ -109,7 +109,7 @@ export default function ManageCandidatePage() {
           toast.success("Kandidat berhasil ditambahkan");
           setOpenModal(false);
           queryClient.invalidateQueries({
-            queryKey: ["/superadmin/candidates", { votingId: votingId }],
+            queryKey: ["/superadmin/candidates"],
           });
           setIsSubmitting(false);
         },
