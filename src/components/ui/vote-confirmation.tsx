@@ -1,14 +1,29 @@
-'use client';
+"use client";
 
 import { X } from "lucide-react";
 import Image from "next/image";
-import { Dialog, DialogClose, DialogContent,  DialogOverlay,  DialogPortal,  DialogTitle } from "./dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+} from "./dialog";
 import { Button } from "./button";
+import { useHttpMutation, useQueryClient } from "react-ohttp";
+import { CandidateResponse } from "@/app/_models/response/candidate";
+import { toast } from "sonner";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  onSuccess: () => void;
+  onError: () => void;
+  seasonLogo: string;
+  votingId: string;
+  playerId: string;
   playerName: string;
   playerImage: string;
   teamLogo: string;
@@ -18,10 +33,47 @@ const VoteConfirmationDialog: React.FC<Props> = ({
   open,
   onOpenChange,
   onConfirm,
+  onSuccess,
+  onError,
+  seasonLogo,
+  votingId,
+  playerId,
   playerName,
   playerImage,
   teamLogo,
 }) => {
+  const queryClient = useQueryClient();
+  const vote = useHttpMutation<FormData, CandidateResponse>(
+    "/member/candidates/vote",
+    {
+      method: "POST",
+      queryOptions: {
+        onError: (error) => {
+          onError();
+          toast.error(error?.data?.message || "Terjadi kesalahan");
+        },
+        onSuccess: () => {
+          onOpenChange(false);
+          onSuccess();
+          queryClient.invalidateQueries({
+            queryKey: ["/member/candidates"],
+          });
+        },
+      },
+    }
+  );
+
+  const handleSubmit = () => {
+    const payload = {
+      votingId: votingId,
+      candidateId: playerId,
+    };
+
+    vote.mutate({
+      body: payload,
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
@@ -38,21 +90,29 @@ const VoteConfirmationDialog: React.FC<Props> = ({
 
             {/* Logo */}
             <div className="flex justify-center mb-4">
-              <Image src="/images/PFL-Logo-Biru.png" alt="PFL Logo" width={84} height={50} />
+              <Image
+                src={seasonLogo || "/images/PFL-Logo-Biru.png"}
+                alt="PFL Logo"
+                width={84}
+                height={50}
+              />
             </div>
 
             {/* Title */}
             <DialogTitle className="text-lg md:text-xl font-bold text-blue-pfl mb-4">
-              Apakah kamu yakin memilih<br />{playerName}?
+              Apakah kamu yakin memilih
+              <br />
+              {playerName}?
             </DialogTitle>
 
             {/* Player image */}
-            <div className="relative w-full h-56 rounded-lg overflow-hidden mb-4">
+            <div className="relative w-full h-64 rounded-lg overflow-hidden mb-4">
               <Image
                 src={playerImage}
                 alt={playerName}
-                layout="fill"
+                fill
                 objectFit="cover"
+                objectPosition="top"
               />
               <Image
                 src={teamLogo}
@@ -73,6 +133,7 @@ const VoteConfirmationDialog: React.FC<Props> = ({
               <Button
                 onClick={() => {
                   onConfirm();
+                  handleSubmit();
                   onOpenChange(false);
                 }}
                 className="flex-1 bg-blue-pfl text-white py-2 rounded-md hover:bg-blue-800"
@@ -83,7 +144,8 @@ const VoteConfirmationDialog: React.FC<Props> = ({
 
             {/* Info */}
             <p className="text-xs text-gray-600">
-              <span className="text-blue-pfl font-medium">⚠ Perhatian.</span> Setelah voting, kamu tidak bisa mengganti pilihan.
+              <span className="text-blue-pfl font-medium">⚠ Perhatian.</span>{" "}
+              Setelah voting, kamu tidak bisa mengganti pilihan.
             </p>
           </DialogContent>
         </div>
