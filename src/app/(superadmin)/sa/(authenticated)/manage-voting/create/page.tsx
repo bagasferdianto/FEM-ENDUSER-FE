@@ -313,6 +313,7 @@ export default function CreateVotingForm() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="assistPoint"
@@ -354,6 +355,11 @@ export default function CreateVotingForm() {
                     </FormItem>
                   )}
                 />
+                <p className="text-sm font-medium text-black">
+                  *note : Anda dapat mengubah nilai ini sebelum menyimpan
+                  voting. Skor ini akan digunakan sebagai dasar perhitungan
+                  total performa setiap kandidat.
+                </p>
               </div>
 
               <FormField
