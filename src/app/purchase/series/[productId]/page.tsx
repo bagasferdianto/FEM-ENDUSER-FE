@@ -88,7 +88,7 @@ const PurchasePage = ({ params } : PurchasePageProps) => {
 
     return (
         <MemberLayout withFooter>
-            <div className="min-h-screen bg-white px-4 py-8 flex flex-col items-center">
+            <div className="min-h-screen bg-white px-4 py-28 flex flex-col items-center">
                 <div className="flex items-center justify-between w-full max-w-4xl border rounded-lg p-8 mb-6">
                     {steps.map((stepItem, index) => {
                         const stepOrder = ['data', 'confirm', 'success'];
