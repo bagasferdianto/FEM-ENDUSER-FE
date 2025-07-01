@@ -42,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { useGetPlayingPlayers } from "../../../_services/playing-player";
 import { toast } from "sonner";
 import { useQueryClient } from "react-ohttp";
+import { useGetActiveSeason } from "../../../_services/season";
 
 export default function ManageCandidatePage() {
   const params = useParams();
@@ -139,10 +140,13 @@ export default function ManageCandidatePage() {
   };
   // --- CHANGE END: Update onSubmit Logic ---
 
+  const { data: season, isFetching: isFetchingSeason } = useGetActiveSeason();
+
   const seasonTeamPlayer = useGetPlayingPlayers({
     sort: "createdAt",
     dir: "desc",
     limit: "1000",
+    seasonId: season?.data?.id ?? "none",
   });
   const seasonTeamPlayers = seasonTeamPlayer.data?.data?.list || [];
 
@@ -154,7 +158,7 @@ export default function ManageCandidatePage() {
     return <div>ID voting tidak ditemukan.</div>;
   }
 
-  if (isFetching) {
+  if (isFetching || isFetchingSeason) {
     return (
       <SuperadminLayout>
         <div className="flex justify-center items-center h-64">
