@@ -16,7 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useHttpMutation } from "react-ohttp";
+import { useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { LogInResponse } from "../_models/response/log-in";

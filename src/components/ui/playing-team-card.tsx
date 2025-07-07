@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "./dialog";
 import { Button } from "./button";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 
 interface PlayingTeamCardProps {
   playingTeam: PlayingTeam;

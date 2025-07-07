@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Candidate } from "../../_models/response/candidate";

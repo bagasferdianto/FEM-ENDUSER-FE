@@ -1,6 +1,6 @@
 "use client";
 
-import { useHttp } from "react-ohttp";
+import { useHttp } from "@dhoniaridho/react-ohttp";
 import { SeriesResponse, SeriesResponseList } from "../_models/response/series";
 
 export const useGetSeries = (params?: Record<string, string>) => {

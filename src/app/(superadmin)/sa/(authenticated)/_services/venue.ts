@@ -1,6 +1,6 @@
 "use-client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { VenueResponse, VenueResponseList } from "../_models/response/venue";
 
 export const useGetVenues = (params: Record<string, string>) => {

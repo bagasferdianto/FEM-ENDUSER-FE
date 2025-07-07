@@ -1,6 +1,6 @@
 "use-client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { TeamResponse, TeamResponseList } from "../_models/response/team";
 
 export const useGetTeams = (params: Record<string, string>) => {

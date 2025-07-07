@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { FileUpload, Input, SearchInput } from "@/components/ui/input";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import LoadingCard from "@/components/ui/loading";
 import EmptyCard from "@/components/ui/empty-card";
 

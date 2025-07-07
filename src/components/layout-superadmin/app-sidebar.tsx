@@ -81,6 +81,12 @@ const menuItems = [
     pattern: "/sa/transaction{,/**}",
     icon: CreditCard,
   },
+  {
+    title: "Hasil Tiket",
+    url: "/sa/ticket-purchases",
+    pattern: "/sa/ticket-purchases{,/**}",
+    icon: CreditCard,
+  },
 ];
 
 export function AppSidebar() {

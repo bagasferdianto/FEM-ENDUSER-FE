@@ -1,6 +1,6 @@
 "use-client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { PlayingTeamResponse, PlayingTeamResponseList } from "../_models/response/playing-team";
 
 export const useGetPlayingTeams = (params: Record<string, string>) => {

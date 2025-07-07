@@ -16,7 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useHttpMutation } from "react-ohttp";
+import { useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { toast } from "sonner";
 import { RegisterResponse } from "./_models/response/register-member";
 import { useRouter } from "next/navigation";

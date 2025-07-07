@@ -6,7 +6,7 @@ import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { VenuesDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

@@ -35,7 +35,7 @@ import {
 } from "./form";
 import { FileUpload, Input } from "./input";
 import { Button } from "./button";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 
 interface TeamCardProps {
   team: Team;

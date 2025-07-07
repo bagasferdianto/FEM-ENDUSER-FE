@@ -1,6 +1,6 @@
 "use client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { VotingResponse, VotingResponseList } from "../_models/response/voting";
 
 export const useGetVotings = (params: Record<string, string>) => {

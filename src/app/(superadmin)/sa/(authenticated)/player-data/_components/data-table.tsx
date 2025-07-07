@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDeletePlayer, useUpdatePlayer } from "../../_services/player";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import {
   Dialog,
   DialogContent,

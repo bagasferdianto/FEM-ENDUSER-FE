@@ -1,6 +1,6 @@
 "use client";
 
-import { useHttp } from "react-ohttp";
+import { useHttp } from "@dhoniaridho/react-ohttp";
 import { PurchaseResponseList } from "../_models/response/purchase";
 
 export const useGetPurchase = (params?: Record<string, string>) => {

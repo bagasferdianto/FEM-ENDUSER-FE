@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { PurchaseResponse } from '@/app/_models/response/purchase';
-import { useHttpMutation } from 'react-ohttp';
+import { useHttpMutation } from '@dhoniaridho/react-ohttp';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import Cookies from "js-cookie";

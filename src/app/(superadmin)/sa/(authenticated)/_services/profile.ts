@@ -1,5 +1,5 @@
 "use-client";
-import { useHttp } from "react-ohttp";
+import { useHttp } from "@dhoniaridho/react-ohttp";
 import { ProfileResponse } from "../_models/response/profile";
 
 export const useGetProfile = () => {
