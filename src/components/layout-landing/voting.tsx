@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useGetVoting } from "@/app/_services/voting";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 const Voting: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -43,13 +44,12 @@ const Voting: React.FC = () => {
           className="group relative py-12 h-[300px] sm:h-[400px] md:h-[500px] w-full max-w-full"
         >
           {/* BACKGROUND */}
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-            style={{
-              backgroundImage: `url('${
-                voting.banner?.url || "/images/voting-banner.png"
-              }')`,
-            }}
+          <Image
+            src={voting.banner?.url || "/images/voting-banner.png"}
+            alt="Voting Banner"
+            fill
+            priority
+            className="absolute inset-0 object-cover z-0"
           />
 
           {/* LINK di bawah */}
@@ -58,7 +58,6 @@ const Voting: React.FC = () => {
             className="absolute inset-0 z-0 block"
             aria-label="Go to voting page"
           />
-
 
           {/* BUTTONS */}
           {page > 1 && (
