@@ -33,6 +33,7 @@ export function AppHeader() {
     { pattern: "/sa/playing-team-data{,/**}", title: "Data Tim Yang Bermain" },
     { pattern: "/sa/venue-data{,/**}", title: "Data Venue" },
     { pattern: "/sa/transaction{,/**}", title: "Transaksi" },
+    { pattern: "/sa/ticket-purchases{,/**}", title: "Data tiket" },
   ];
   const getPageTitle = (path: string): string => {
     const match = pathMap.find(({ pattern }) => minimatch(path, pattern));

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Ticket } from "../../../_models/response/ticket";
 import { toast } from "sonner";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 
 interface TicketPageProps {
   params: Promise<{

@@ -12,7 +12,7 @@ import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { useDeletePlayingPlayer } from "@/app/(superadmin)/sa/(authenticated)/_services/playing-player";
 import { useState } from "react";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./dialog";
 import { Button } from "./button";

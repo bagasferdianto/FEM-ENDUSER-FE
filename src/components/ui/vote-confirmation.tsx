@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "./dialog";
 import { Button } from "./button";
-import { useHttpMutation, useQueryClient } from "react-ohttp";
+import { useHttpMutation, useQueryClient } from "@dhoniaridho/react-ohttp";
 import { CandidateResponse } from "@/app/_models/response/candidate";
 import { toast } from "sonner";
 

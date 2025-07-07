@@ -41,7 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useGetPlayingPlayers } from "../../../_services/playing-player";
 import { toast } from "sonner";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import { useGetActiveSeason } from "../../../_services/season";
 
 export default function ManageCandidatePage() {

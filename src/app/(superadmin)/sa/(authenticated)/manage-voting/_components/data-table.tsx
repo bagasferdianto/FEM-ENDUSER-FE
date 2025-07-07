@@ -31,7 +31,7 @@ import { useDeleteVoting, useUpdateVoting } from "../../_services/voting";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import {
   Dialog,
   DialogContent,

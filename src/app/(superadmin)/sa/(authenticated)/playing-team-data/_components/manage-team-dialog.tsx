@@ -18,7 +18,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PaginationControls } from "@/components/pagination/page";
 import { Loader2, Plus } from "lucide-react";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import LoadingCard from "@/components/ui/loading";
 import EmptyCard from "@/components/ui/empty-card";
 

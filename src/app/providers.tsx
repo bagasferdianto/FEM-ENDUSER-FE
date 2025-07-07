@@ -1,7 +1,7 @@
 "use client";
 
 import { startTransition, useEffect, useRef, useState } from "react";
-import { HttpProvider, QueryClient } from "react-ohttp";
+import { HttpProvider, QueryClient } from "@dhoniaridho/react-ohttp";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { ProgressProvider } from "@bprogress/next/app";

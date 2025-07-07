@@ -1,6 +1,6 @@
 "use client";
 
-import { useHttp } from "react-ohttp";
+import { useHttp } from "@dhoniaridho/react-ohttp";
 import { TicketResponse } from "../_models/response/ticket";
 
 export const useGetTicketById = (id: string) => {

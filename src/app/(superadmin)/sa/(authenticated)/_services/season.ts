@@ -1,6 +1,6 @@
 "use-client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { SeasonResponse, SeasonResponseList } from "../_models/response/season";
 
 export const useGetSeasons = (params: Record<string, string>) => {

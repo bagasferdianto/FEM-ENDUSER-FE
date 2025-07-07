@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useCreatePlayer, useGetPlayers } from "../_services/player";
 import { PlayersDataTable } from "./_components/data-table";
 import { PaginationControls } from "@/components/pagination/page";
-import { useQueryClient } from "react-ohttp";
+import { useQueryClient } from "@dhoniaridho/react-ohttp";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

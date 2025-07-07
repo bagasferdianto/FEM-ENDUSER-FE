@@ -1,6 +1,6 @@
 "use-client";
 
-import { useHttp, useHttpMutation } from "react-ohttp";
+import { useHttp, useHttpMutation } from "@dhoniaridho/react-ohttp";
 import { PlayerPositionResponse, PlayingPlayerResponse, PlayingPlayerResponseList } from "../_models/response/playing-player";
 
 export const useGetPlayingPlayers = (params: Record<string, string>) => {
