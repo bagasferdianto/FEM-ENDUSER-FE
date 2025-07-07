@@ -1,0 +1,20 @@
+services:
+  fem-enduser:
+    image: yudhapwa/fe-catat-sehat:dev #ganti
+    container_name: fem-enduser
+    ports:
+      - "5173:80"
+    restart: on-failure
+    # networks: #just nginx
+    #   - nginx-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+# networks:
+#   nginx-network:
+#     name: nginx-network
+#     external: true
