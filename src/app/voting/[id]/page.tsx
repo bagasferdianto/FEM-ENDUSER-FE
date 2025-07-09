@@ -16,11 +16,11 @@ interface VotingPageProps {
 
 const VotingPage = ({ params }: VotingPageProps) => {
   const { id } = use(params);
-  const { data: voting, isFetching: isFetchingVoting } = useGetVotingById(id);
-  const { data: candidates, isFetching: isFetchingCandidates } =
-    useGetCandidate({ votingId: id });
-
+  const { data: voting, isFetching: isFetchingVoting } = useGetVotingById(id); 
   const [isEnded, setIsEnded] = useState(false);
+  
+  const { data: candidates, isFetching: isFetchingCandidates } =
+    useGetCandidate({ votingId: id, closedVote: isEnded ? "true" : "false" });
 
   useEffect(() => {
     if (voting?.data) {
