@@ -2,6 +2,7 @@ import type React from "react";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import type { Ticket } from "../../../../_models/response/ticket";
 import DefaultTeamLogo from "@/app/assets/images/default-team.svg";
+import Image from "next/image";
 
 export default function TicketCardExport({
   ticketsList,
@@ -114,13 +115,6 @@ export default function TicketCardExport({
     flexShrink: 0,
   };
 
-  const teamLogoStyle: React.CSSProperties = {
-    objectFit: "contain",
-    width: "30px",
-    height: "30px",
-    flexShrink: 0,
-  };
-
   const teamNameStyle: React.CSSProperties = {
     fontSize: "12px",
     fontWeight: "500",
@@ -216,30 +210,56 @@ export default function TicketCardExport({
                       <td style={tableCellStyle}>
                         <div style={teamContainerStyle}>
                           <div style={teamStyle}>
-                            <img
-                              src={
-                                match.homeSeasonTeam.team.logo === ""
-                                  ? DefaultTeamLogo
-                                  : match.homeSeasonTeam.team.logo
-                              }
-                              alt="team logo"
-                              style={teamLogoStyle}
-                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                width: "30px",
+                                height: "30px",
+                                flexShrink: 0,
+                                overflow: "hidden",
+                              }}
+                            >
+                              <Image
+                                src={
+                                  match.homeSeasonTeam.team.logo === ""
+                                    ? DefaultTeamLogo
+                                    : match.homeSeasonTeam.team.logo
+                                }
+                                alt="team logo"
+                                fill
+                                style={{
+                                  objectFit: "contain",
+                                }}
+                              />
+                            </div>
                             <span style={teamNameStyle}>
                               {match.homeSeasonTeam.team.name || "Team Unknown"}
                             </span>
                           </div>
                           <div style={vsStyle}>VS</div>
                           <div style={teamStyle}>
-                            <img
-                              src={
-                                match.awaySeasonTeam.team.logo === ""
-                                  ? DefaultTeamLogo
-                                  : match.awaySeasonTeam.team.logo
-                              }
-                              alt="team logo"
-                              style={teamLogoStyle}
-                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                width: "30px",
+                                height: "30px",
+                                flexShrink: 0,
+                                overflow: "hidden",
+                              }}
+                            >
+                              <Image
+                                src={
+                                  match.awaySeasonTeam.team.logo === ""
+                                    ? DefaultTeamLogo
+                                    : match.awaySeasonTeam.team.logo
+                                }
+                                alt="team logo"
+                                fill
+                                style={{
+                                  objectFit: "contain",
+                                }}
+                              />
+                            </div>
                             <span style={teamNameStyle}>
                               {match.awaySeasonTeam.team.name || "Team Unknown"}
                             </span>
