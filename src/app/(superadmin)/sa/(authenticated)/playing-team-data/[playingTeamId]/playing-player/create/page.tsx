@@ -62,8 +62,8 @@ export default function CreatePlayingPlayerForm({
   // get players for dropdown
   const [search, setSearch] = useState("");
   const players = useGetPlayers({
-    sort: "createdAt",
-    dir: "desc",
+    sort: "name",
+    dir: "asc",
     limit: "1000",
     search: search,
   });
