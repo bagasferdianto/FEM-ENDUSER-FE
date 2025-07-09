@@ -91,6 +91,7 @@ const Matches: React.FC = () => {
                                                     <div className="flex justify-between items-center w-full">
                                                         <span className="text-white font-semibold">Ticket For 1 Day</span>
                                                         <div className="flex justify-between items-center">
+                                                            <span className="flex flex-row justify-center items-center gap-2 font-semibold px-4"><div className="bg-white font-bold text-lg text-blue-pfl px-2 rounded-md">Tersisa {ticket.quota.remaining} Tiket</div></span>
                                                             <span className="font-semibold px-4">{formatRupiah(ticket.price)}</span>
                                                             <Button onClick={() => router.push(`/purchase/day/${ticket.id}`)} size="sm" className="bg-blue-pfl hover:bg-blue-800">Beli Tiket</Button>
                                                         </div>
